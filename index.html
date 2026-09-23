@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Las 5S — Metodología de mejora continua</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue-900:#0a2463;
+    --blue-700:#1a4d8f;
+    --wrapper-50:#EEF6FF;
+    --wrapper-100:#D8EBFF;
+    --wrapper-200:#BCDCFF;
+    --accent-500:#FF6B35;
+    --accent-600:#E55A28;
+    --mint-100:#D4F3E8;
+    --mint-500:#2EBB8F;
+    --mint-700:#1A8C5E;
+    --straw-100:#FBE2DE;
+    --straw-500:#D6534A;
+    --straw-700:#A32E27;
+    --ink-800:#1a1a1a;
+    --ink-600:#4a4a4a;
+  }
+  *{box-sizing:border-box;}
+  html, body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+  }
+  body{
+    background:var(--wrapper-50);
+    color:var(--ink-800);
+    font-family:'Nunito',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Fredoka',sans-serif; margin:0;}
+
+  .hero{background:var(--blue-900); color:var(--wrapper-50); padding:40px 24px 30px; text-align:center;}
+  .hero h1{font-weight:600; font-size:1.9rem; line-height:1.15; margin-bottom:8px;}
+  .hero p{margin:0; color:var(--wrapper-100); opacity:.85; font-size:.98rem;}
+
+  .belt-divider{
+    height:14px;
+    background:repeating-linear-gradient(-45deg, var(--accent-500) 0 14px, var(--blue-900) 14px 28px);
+  }
+
+  .tabs{
+    display:flex; gap:6px; padding:12px 14px;
+    max-width:460px; margin:0 auto;
+    position:sticky; top:0; background:var(--wrapper-50); z-index:10;
+    border-bottom:2px solid var(--wrapper-200);
+    flex-wrap:wrap;
+    overflow-x:auto;
+  }
+  .tab-btn{
+    flex:0 1 auto; padding:9px 8px; border-radius:999px;
+    border:2px solid var(--accent-500); background:transparent;
+    color:var(--blue-700); font-family:'Nunito',sans-serif; font-weight:700;
+    font-size:.75rem; cursor:pointer; white-space:nowrap;
+  }
+  .tab-btn.active{background:var(--accent-500); color:var(--wrapper-50);}
+
+  main{max-width:460px; margin:0 auto; padding:8px 20px 60px;}
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .card{
+    background:var(--wrapper-100);
+    border:2px solid var(--wrapper-200);
+    border-radius:20px;
+    padding:22px;
+    margin-top:16px;
+  }
+  .card h3{margin-bottom:10px; color:var(--blue-700); font-size:1.08rem;}
+  .card h4{margin-bottom:8px; color:var(--blue-700); font-size:.95rem; margin-top:12px;}
+  .card p{line-height:1.55; margin:0 0 10px; font-size:.95rem;}
+  .card p:last-child{margin-bottom:0;}
+  .card ul{margin:6px 0 12px; padding-left:20px;}
+  .card ul:last-child{margin-bottom:0;}
+  .card li{margin-bottom:9px; line-height:1.5; font-size:.95rem;}
+  .card li:last-child{margin-bottom:0;}
+  .card table{width:100%; border-collapse:collapse; margin:10px 0; font-size:.9rem;}
+  .card th, .card td{border:1px solid var(--wrapper-200); padding:8px; text-align:left;}
+  .card th{background:var(--wrapper-200); color:var(--blue-700); font-weight:700;}
+  .card ol{margin:6px 0 12px; padding-left:20px;}
+  .card ol li{margin-bottom:9px;}
+
+  .btn-primary{
+    width:100%; padding:14px; margin-top:16px;
+    background:var(--accent-500); color:var(--wrapper-50); border:none;
+    border-radius:14px; font-weight:700; font-size:1rem; cursor:pointer;
+    transition:transform .1s ease;
+    font-family:'Nunito',sans-serif;
+  }
+  .btn-primary:active{transform:scale(.97);}
+  .btn-primary:disabled{opacity:.5; cursor:not-allowed;}
+  .btn-primary:hover{background:var(--accent-600);}
+
+  .hud{display:flex; justify-content:space-between; font-size:.9rem; margin-bottom:12px;}
+  .hud strong{font-size:1.05rem;}
+  .card-text{font-size:1.15rem; color:var(--blue-700); margin:14px 0; min-height:60px; display:flex; align-items:center; font-weight:500;}
+  .answer-row{display:flex; gap:10px; margin-bottom:14px;}
+  .btn-answer{
+    flex:1; padding:12px; border:none; border-radius:12px;
+    font-weight:700; font-size:.9rem; color:#fff; cursor:pointer;
+    background:var(--accent-500); transition:all .2s ease;
+    font-family:'Nunito',sans-serif;
+  }
+  .btn-answer:active{transform:scale(.96);}
+  .btn-answer:disabled{opacity:.6; cursor:not-allowed;}
+  .btn-answer.correct{background:var(--mint-500);}
+  .btn-answer.incorrect{background:var(--straw-500);}
+  .btn-answer:hover{opacity:0.9;}
+
+  .feedback{min-height:1.4em; font-size:.95rem; font-weight:700; text-align:center; margin:10px 0;}
+  .feedback.ok{color:var(--mint-700);}
+  .feedback.fail{color:var(--straw-700);}
+  .hidden{display:none !important;}
+
+  .opt-btn{
+    width:100%; padding:12px; margin:8px 0;
+    background:var(--wrapper-100); color:var(--ink-800); border:2px solid var(--wrapper-200);
+    border-radius:12px; font-weight:600; font-size:.95rem; cursor:pointer; text-align:left;
+    transition:all .2s ease;
+    font-family:'Nunito',sans-serif;
+  }
+  .opt-btn:active{transform:scale(.98);}
+  .opt-btn:disabled{cursor:not-allowed;}
+  .opt-btn.correct{background:var(--mint-500); color:#fff; border-color:var(--mint-500);}
+  .opt-btn.incorrect{background:var(--straw-500); color:#fff; border-color:var(--straw-500);}
+  .opt-btn:hover{border-color:var(--blue-700);}
+
+  .modal-overlay{display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.3); z-index:100; align-items:center; justify-content:center;}
+  .modal-overlay.active{display:flex;}
+  .modal-box{background:#fff; border-radius:24px; padding:28px 24px; max-width:380px; text-align:center; box-shadow:0 10px 40px rgba(0,0,0,.2); margin:20px;}
+  .modal-box h2{color:var(--blue-900); margin-bottom:12px; font-size:1.4rem;}
+  .modal-box p{margin:0 0 20px; color:var(--ink-600); line-height:1.6;}
+  .modal-btn{width:100%; padding:12px; margin:8px 0; border:none; border-radius:12px; font-weight:700; cursor:pointer; font-family:'Nunito',sans-serif;}
+  .modal-btn.primary{background:var(--accent-500); color:#fff;}
+  .modal-btn.primary:hover{background:var(--accent-600);}
+  .modal-btn.secondary{background:var(--wrapper-200); color:var(--blue-700);}
+  .modal-btn.secondary:hover{background:var(--wrapper-200);}
+
+  .accordion-card{padding:0; overflow:hidden;}
+  .accordion-toggle{
+    width:100%; display:flex; justify-content:space-between; align-items:center; gap:12px;
+    background:none; border:none; padding:22px; margin:0; text-align:left; cursor:pointer;
+    font-family:'Fredoka',sans-serif; font-weight:600; font-size:1rem; color:var(--blue-700);
+  }
+  .accordion-icon{
+    flex:0 0 auto; width:26px; height:26px; border-radius:50%;
+    background:var(--accent-500); color:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:1.05rem; font-weight:700; transition:transform .25s ease;
+  }
+  .accordion-card.open .accordion-icon{transform:rotate(45deg);}
+  .accordion-body{max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 22px 22px;}
+  .accordion-body p{line-height:1.55; margin:0 0 10px; font-size:.95rem;}
+  .accordion-body p:last-child{margin-bottom:0;}
+  .accordion-body ul{margin:0; padding-left:20px;}
+  .accordion-body li{margin-bottom:9px; line-height:1.5; font-size:.95rem;}
+  .accordion-body li:last-child{margin-bottom:0;}
+
+  .check-item{display:flex; align-items:flex-start; gap:10px; padding:9px 0; cursor:pointer;}
+  .check-item input{margin-top:3px; width:18px; height:18px; accent-color:var(--mint-500); flex:0 0 auto;}
+  .check-item span{font-size:.95rem; line-height:1.5;}
+  .check-progress{font-size:.85rem; font-weight:700; color:var(--blue-700); margin-top:6px;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Las 5S</h1>
+  <p>Metodología de mejora continua y organización del lugar de trabajo</p>
+</div>
+
+<div class="belt-divider"></div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab(event, 'resumen')">Resumen</button>
+  <button class="tab-btn" onclick="switchTab(event, 'teoria')">Teoría</button>
+  <button class="tab-btn" onclick="switchTab(event, 'memoria')">Memoria</button>
+  <button class="tab-btn" onclick="switchTab(event, 'juego')">Juego</button>
+  <button class="tab-btn" onclick="switchTab(event, 'quiz')">Quiz</button>
+  <button class="tab-btn" onclick="switchTab(event, 'actividad')">Actividad</button>
+</div>
+
+<main>
+
+  <div id="resumen" class="panel active">
+    <div class="card">
+      <h3>¿Qué son las 5S?</h3>
+      <p>Las 5S son una metodología de origen japonés (parte del sistema Lean) que establece cinco principios para organizar y mejorar el lugar de trabajo. Su nombre proviene de las palabras en japonés: Seiri, Seiton, Seiso, Seiketsu y Shitsuke.</p>
+      <p>El objetivo es crear un entorno de trabajo más limpio, seguro, eficiente y productivo.</p>
+    </div>
+
+    <div class="card">
+      <h3>1. Seiri (Clasificar)</h3>
+      <p>Separar lo necesario de lo innecesario. Se trata de identificar qué elementos son realmente útiles para las tareas diarias y descartar, reubicar o vender aquello que no se usa.</p>
+      <ul>
+        <li><strong>Beneficio:</strong> Reduce el desorden y el espacio ocupado</li>
+        <li><strong>Método:</strong> Revisar cada objeto, marcar su frecuencia de uso</li>
+        <li><strong>Pregunta clave:</strong> ¿Realmente necesito esto aquí?</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>2. Seiton (Organizar)</h3>
+      <p>Establecer un lugar específico para cada objeto, de manera que sea fácil encontrarlo y utilizarlo. Cada cosa debe tener su sitio y estar disponible cuando se necesita.</p>
+      <ul>
+        <li><strong>Beneficio:</strong> Aumenta la eficiencia y reduce el tiempo de búsqueda</li>
+        <li><strong>Método:</strong> Asignar espacios, etiquetar áreas, usar códigos de color</li>
+        <li><strong>Pregunta clave:</strong> ¿Dónde debería estar esto?</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>3. Seiso (Limpiar)</h3>
+      <p>Mantener el lugar de trabajo limpio y libre de suciedad, polvo y contaminantes. Se incluye la limpieza de máquinas, herramientas, pisos y superficies de trabajo.</p>
+      <ul>
+        <li><strong>Beneficio:</strong> Mejora la seguridad, la calidad y el ambiente laboral</li>
+        <li><strong>Método:</strong> Establecer cronogramas de limpieza, asignar responsables</li>
+        <li><strong>Pregunta clave:</strong> ¿Está todo limpio y en buenas condiciones?</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>4. Seiketsu (Estandarizar)</h3>
+      <p>Crear estándares y procedimientos para mantener las tres primeras S. Se documentan las mejoras y se establecen reglas que garanticen que los cambios perduren.</p>
+      <ul>
+        <li><strong>Beneficio:</strong> Asegura la consistencia y evita la degradación del orden</li>
+        <li><strong>Método:</strong> Documentar procedimientos, crear manuales visuales</li>
+        <li><strong>Pregunta clave:</strong> ¿Cómo mantenemos estos cambios a largo plazo?</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>5. Shitsuke (Disciplina)</h3>
+      <p>Desarrollar el hábito de seguir los estándares y hacer de la limpieza y el orden una forma de vida laboral. Es el factor más importante para mantener las mejoras.</p>
+      <ul>
+        <li><strong>Beneficio:</strong> Asegura la sostenibilidad de la metodología</li>
+        <li><strong>Método:</strong> Formación continua, auditorías, reconocimiento de buenos comportamientos</li>
+        <li><strong>Pregunta clave:</strong> ¿Estamos todos comprometidos con las reglas?</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Beneficios de las 5S</h3>
+      <ul>
+        <li>Mayor productividad y eficiencia</li>
+        <li>Reducción de accidentes y mejoría de la seguridad</li>
+        <li>Mejor calidad del producto o servicio</li>
+        <li>Ambiente de trabajo más agradable</li>
+        <li>Reducción de costos por desperdicio</li>
+        <li>Mejora en la moral y motivación del equipo</li>
+      </ul>
+    </div>
+
+    <button onclick="descargarPDF('resumen')" class="btn-primary">📥 Descargar Resumen en PDF</button>
+  </div>
+
+  <div id="teoria" class="panel">
+    <div class="card">
+      <h3>¿Qué es Lean Manufacturing?</h3>
+      <p><strong>Lean</strong> es una filosofía y metodología de gestión empresarial originaria de Japón, desarrollada principalmente por Toyota. Se enfoca en eliminar desperdicios y optimizar procesos para lograr máxima eficiencia con mínimo uso de recursos.</p>
+    </div>
+
+    <div class="card">
+      <h3>Los 7 tipos de desperdicios (Mudas)</h3>
+      <ol>
+        <li><strong>Sobreproducción:</strong> Producir más de lo que se necesita o antes de que sea necesario</li>
+        <li><strong>Esperas:</strong> Tiempo ocioso donde no se agrega valor</li>
+        <li><strong>Transporte innecesario:</strong> Movimiento excesivo de materiales</li>
+        <li><strong>Sobreprocesamiento:</strong> Hacer más de lo necesario o con calidad superior</li>
+        <li><strong>Inventario excesivo:</strong> Mantener más material del necesario</li>
+        <li><strong>Movimientos innecesarios:</strong> Movimientos ineficientes de trabajadores</li>
+        <li><strong>Defectos y reprocesamiento:</strong> Productos defectuosos que requieren corrección</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3>Las 5S como herramienta de Lean</h3>
+      <p>Las 5S son un pilar fundamental del sistema Lean. Se consideran el primer paso para implementar una cultura de mejora continua y eliminar desperdicios.</p>
+      <ul>
+        <li>Eliminan desperdicios de espacio y tiempo (Seiri y Seiton)</li>
+        <li>Mejoran la seguridad, esencial para la eficiencia (Seiso)</li>
+        <li>Crean estándares y procedimientos (Seiketsu)</li>
+        <li>Desarrollan disciplina y responsabilidad en el equipo (Shitsuke)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Historia y evolución de las 5S</h3>
+      <p><strong>Origen (1950s-1960s):</strong> Las 5S surgieron en Japón como parte del movimiento Kaizen en la post-guerra.</p>
+      <p><strong>Expansión (1980s-1990s):</strong> Se adoptaron en empresas occidentales como parte del interés por el management japonés. Toyota compartió su experiencia.</p>
+      <p><strong>Época actual:</strong> Las 5S son un estándar en empresas de manufactura, servicios, salud y administración pública en todo el mundo.</p>
+    </div>
+
+    <button onclick="descargarPDF('teoria')" class="btn-primary">📥 Descargar Teoría Completa en PDF</button>
+  </div>
+
+  <div id="memoria" class="panel">
+    <div class="card">
+      <h3>Las 5S en japonés y español</h3>
+      <table>
+        <tr>
+          <th>Japonés</th>
+          <th>Español</th>
+          <th>Significado</th>
+        </tr>
+        <tr>
+          <td>Seiri</td>
+          <td>Clasificar</td>
+          <td>Eliminar lo innecesario</td>
+        </tr>
+        <tr>
+          <td>Seiton</td>
+          <td>Organizar</td>
+          <td>Orden de lo necesario</td>
+        </tr>
+        <tr>
+          <td>Seiso</td>
+          <td>Limpiar</td>
+          <td>Eliminar suciedad</td>
+        </tr>
+        <tr>
+          <td>Seiketsu</td>
+          <td>Estandarizar</td>
+          <td>Crear procedimientos</td>
+        </tr>
+        <tr>
+          <td>Shitsuke</td>
+          <td>Disciplina</td>
+          <td>Mantener los hábitos</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Ciclo de implementación</h3>
+      <ol>
+        <li><strong>Planificación:</strong> Definir objetivos y área de aplicación</li>
+        <li><strong>Sensibilización:</strong> Capacitar al equipo en la metodología</li>
+        <li><strong>Implementación:</strong> Aplicar cada S de forma secuencial</li>
+        <li><strong>Evaluación:</strong> Realizar auditorías y medir resultados</li>
+        <li><strong>Mejora continua:</strong> Ajustar procedimientos según aprendizajes</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3>Herramientas comunes</h3>
+      <ul>
+        <li><strong>Etiquetas y señalización:</strong> Identificar zonas, áreas, contenedores</li>
+        <li><strong>Código de colores:</strong> Diferenciar tipos de elementos o áreas</li>
+        <li><strong>Fotografías:</strong> Documentar el estado ideal antes y después</li>
+        <li><strong>Auditorías visuales:</strong> Inspecciones periódicas de cumplimiento</li>
+        <li><strong>Listas de verificación:</strong> Garantizar que se cumple el estándar</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Beneficios de Seiton vs Seiso</h3>
+      <p><strong>Seiton (Organizar):</strong> Cada cosa en su lugar, fácil de encontrar</p>
+      <p><strong>Seiso (Limpiar):</strong> Eliminar suciedad y contaminantes</p>
+      <p><em>Nota: Ambas son necesarias. Un lugar puede estar ordenado pero sucio, o limpio pero desorganizado.</em></p>
+    </div>
+  </div>
+
+  <div id="juego" class="panel">
+    <div id="gameMenu" class="card">
+      <h3>Identifica la S correcta</h3>
+      <p>Se te presentarán situaciones del lugar de trabajo. Identifica cuál de las 5S corresponde a cada caso. ¿Qué puntaje conseguís?</p>
+      <button id="startGameBtn" class="btn-primary">Iniciar juego</button>
+    </div>
+
+    <div id="gamePlay" class="hidden">
+      <div class="hud">
+        <div>Puntuación: <strong id="scoreEl">0</strong></div>
+        <div>Vidas: <strong id="livesEl">❤️ ❤️ ❤️</strong></div>
+      </div>
+      <div class="card">
+        <div class="card-text" id="cardTextEl"></div>
+        <div class="answer-row">
+          <button id="btn1" class="btn-answer" onclick="answer(0)"></button>
+          <button id="btn2" class="btn-answer" onclick="answer(1)"></button>
+        </div>
+        <div id="feedbackEl" class="feedback"></div>
+      </div>
+    </div>
+
+    <div id="gameEnd" class="hidden">
+      <div class="modal-overlay active">
+        <div class="modal-box">
+          <h2>¡Fin del juego!</h2>
+          <p>Puntuación final: <strong id="finalScoreEl">0</strong></p>
+          <p id="finalMsgEl"></p>
+          <button class="modal-btn primary" onclick="startGame()">Jugar de nuevo</button>
+          <button class="modal-btn secondary" onclick="switchTab(event, 'quiz')">Ir al Quiz</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="quiz" class="panel">
+    <div id="quizQuestionCard" class="card">
+      <p style="color:#666; font-size:.9rem;">
+        <span id="quizProgress">Pregunta 1 de 10</span>
+      </p>
+      <h3 id="quizQuestion" style="margin-bottom:16px;"></h3>
+      <div id="quizOptions"></div>
+      <div id="quizExp" style="background:var(--mint-100); color:var(--mint-700); padding:12px 14px; border-radius:12px; font-size:.92rem; line-height:1.55; margin:14px 0 0; display:none;"></div>
+      <button id="quizNextBtn" class="btn-primary hidden">Siguiente</button>
+    </div>
+
+    <div id="quizResult" class="hidden">
+      <div class="modal-overlay active">
+        <div class="modal-box">
+          <h2>Resultado del Quiz</h2>
+          <p>Obtuviste <strong id="quizScoreEl">0</strong> de 10 respuestas correctas</p>
+          <p id="quizMsgEl"></p>
+          <button class="modal-btn primary" onclick="retryQuiz()">Reintentar</button>
+          <button class="modal-btn secondary" onclick="switchTab(event, 'memoria')">Ver apuntes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="actividad" class="panel">
+    <div class="card accordion-card">
+      <button class="accordion-toggle" onclick="toggleAccordion(this)">
+        <span>1. ¿Qué son las 5S y cuál es su objetivo principal?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>Las 5S son una metodología de origen japonés, parte del sistema Lean, que establece cinco principios (Seiri, Seiton, Seiso, Seiketsu y Shitsuke) para organizar el lugar de trabajo. Su objetivo principal es crear un entorno más limpio, seguro, eficiente y productivo.</p>
+      </div>
+    </div>
+
+    <div class="card accordion-card">
+      <button class="accordion-toggle" onclick="toggleAccordion(this)">
+        <span>2. Las cinco etapas de las 5S</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <ul>
+          <li><strong>Seiri (Clasificar):</strong> separar lo necesario de lo innecesario y descartar o reubicar lo que no se usa.</li>
+          <li><strong>Seiton (Organizar):</strong> asignar un lugar específico a cada objeto para encontrarlo y usarlo fácilmente.</li>
+          <li><strong>Seiso (Limpiar):</strong> mantener el lugar de trabajo limpio y libre de suciedad.</li>
+          <li><strong>Seiketsu (Estandarizar):</strong> crear normas y procedimientos que sostengan las tres primeras S.</li>
+          <li><strong>Shitsuke (Disciplina):</strong> convertir el cumplimiento de los estándares en un hábito de todo el equipo.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card accordion-card">
+      <button class="accordion-toggle" onclick="toggleAccordion(this)">
+        <span>3. Cuatro beneficios de aplicar las 5S</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <ul>
+          <li>Mayor productividad y eficiencia</li>
+          <li>Reducción de accidentes y mejora de la seguridad</li>
+          <li>Mejor calidad del producto o servicio</li>
+          <li>Ambiente de trabajo más agradable</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card accordion-card">
+      <button class="accordion-toggle" onclick="toggleAccordion(this)">
+        <span>4. ¿Por qué la resistencia al cambio dificulta implementar las 5S?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>Porque implica modificar hábitos y rutinas ya instalados, y buena parte del equipo percibe las 5S como una carga extra de trabajo o incluso como una crítica a su forma habitual de hacer las cosas. A eso se suma el miedo a lo desconocido y la falta de comunicación clara sobre los beneficios reales, lo que hace que el cambio se abandone antes de consolidarse si no hay un compromiso sostenido.</p>
+      </div>
+    </div>
+
+    <div class="card accordion-card">
+      <button class="accordion-toggle" onclick="toggleAccordion(this)">
+        <span>5. Responsabilidades de los directivos</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>Dar el ejemplo aplicando las 5S ellos mismos, destinar tiempo y recursos a la implementación, capacitar al personal, realizar auditorías periódicas para verificar el cumplimiento y reconocer los logros del equipo para sostener la motivación a largo plazo.</p>
+      </div>
+    </div>
+
+    <div class="card accordion-card">
+      <button class="accordion-toggle" onclick="toggleAccordion(this)">
+        <span>6. Tres acciones en una obra de construcción</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>Marcá cada acción a medida que la aplicás:</p>
+        <label class="check-item">
+          <input type="checkbox" onchange="updateCheckProgress(this)">
+          <span>Clasificar herramientas y materiales al empezar la jornada, separando lo que se usa a diario de lo roto o sobrante, y retirarlo del sector de trabajo.</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" onchange="updateCheckProgress(this)">
+          <span>Asignar y señalizar un lugar fijo para cada herramienta, andamio y material, para que cualquiera del equipo lo encuentre rápido.</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" onchange="updateCheckProgress(this)">
+          <span>Limpiar la zona de trabajo y retirar escombros al finalizar cada jornada, dejando pasillos y accesos despejados.</span>
+        </label>
+        <div class="check-progress">0 de 3 aplicadas</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  const PDF_DATA = {
+    resumen: 'JVBERi0xLjQKJZOMi54gUmVwb3J0TGFiIEdlbmVyYXRlZCBQREYgZG9jdW1lbnQgKG9wZW5zb3VyY2UpCjEgMCBvYmoKPDwKL0YxIDIgMCBSIC9GMiAzIDAgUgo+PgplbmRvYmoKMiAwIG9iago8PAovQmFzZUZvbnQgL0hlbHZldGljYSAvRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZyAvTmFtZSAvRjEgL1N1YnR5cGUgL1R5cGUxIC9UeXBlIC9Gb250Cj4+CmVuZG9iagozIDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhLUJvbGQgL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcgL05hbWUgL0YyIC9TdWJ0eXBlIC9UeXBlMSAvVHlwZSAvRm9udAo+PgplbmRvYmoKNCAwIG9iago8PAovQ29udGVudHMgOSAwIFIgL01lZGlhQm94IFsgMCAwIDYxMiA3OTIgXSAvUGFyZW50IDggMCBSIC9SZXNvdXJjZXMgPDwKL0ZvbnQgMSAwIFIgL1Byb2NTZXQgWyAvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1hZ2VJIF0KPj4gL1JvdGF0ZSAwIC9UcmFucyA8PAoKPj4gCiAgL1R5cGUgL1BhZ2UKPj4KZW5kb2JqCjUgMCBvYmoKPDwKL0NvbnRlbnRzIDEwIDAgUiAvTWVkaWFCb3ggWyAwIDAgNjEyIDc5MiBdIC9QYXJlbnQgOCAwIFIgL1Jlc291cmNlcyA8PAovRm9udCAxIDAgUiAvUHJvY1NldCBbIC9QREYgL1RleHQgL0ltYWdlQiAvSW1hZ2VDIC9JbWFnZUkgXQo+PiAvUm90YXRlIDAgL1RyYW5zIDw8Cgo+PiAKICAvVHlwZSAvUGFnZQo+PgplbmRvYmoKNiAwIG9iago8PAovUGFnZU1vZGUgL1VzZU5vbmUgL1BhZ2VzIDggMCBSIC9UeXBlIC9DYXRhbG9nCj4+CmVuZG9iago3IDAgb2JqCjw8Ci9BdXRob3IgKFwoYW5vbnltb3VzXCkpIC9DcmVhdGlvbkRhdGUgKEQ6MjAyNjA5MDgwNTE2NTcrMDAnMDAnKSAvQ3JlYXRvciAoXCh1bnNwZWNpZmllZFwpKSAvS2V5d29yZHMgKCkgL01vZERhdGUgKEQ6MjAyNjA5MDgwNTE2NTcrMDAnMDAnKSAvUHJvZHVjZXIgKFJlcG9ydExhYiBQREYgTGlicmFyeSAtIFwob3BlbnNvdXJjZVwpKSAKICAvU3ViamVjdCAoXCh1bnNwZWNpZmllZFwpKSAvVGl0bGUgKFwoYW5vbnltb3VzXCkpIC9UcmFwcGVkIC9GYWxzZQo+PgplbmRvYmoKOCAwIG9iago8PAovQ291bnQgMiAvS2lkcyBbIDQgMCBSIDUgMCBSIF0gL1R5cGUgL1BhZ2VzCj4+CmVuZG9iago5IDAgb2JqCjw8Ci9GaWx0ZXIgWyAvQVNDSUk4NURlY29kZSAvRmxhdGVEZWNvZGUgXSAvTGVuZ3RoIDE2NjYKPj4Kc3RyZWFtCkdiIVNrOWxKY0cmQUA3LmJnQSI/WGYqbnJdZSVsVEdDYDI/aCdQPl42Oyo5XDwkR1VHOSZdZEdJNyRTLy5uczpwLXJCN1NFJSRxIm44W1U4UyRBVidJajRmbz4sJ1ZhcVcyb2UsLCtaZU0oSGVfSTZoZidCOm1KZlw4dGVOWXRENTxGJkFJMSZsRElOMSpNciNlJDtacVNEPE5ATDtdWU0oQnBwRihldUouZmwzK1k9XSRNQz1fKFdBZjxpJkxUKDhwcFsoYDcsRipdUUYiRyQ3QVJ0RS0zIUNScGltTjdpKi1mUVVxXDRTYCNuUDQ1OFtaMCpbZFFFanEucipVb0ZjbjRpM2MwMTcjSTg0cE5XKCtQXWgrLjM/cktFZV5RWFxlRz48JjtOTGFIQCNWNkEhbWEkYiZEQnJcci5LayxWTmQyM2liTnU4O0E8WTIpKCtyRjwkWikhZm5wTSZASyJOdGoiSzIzRSQ7UjI0X25lLnBgSlZvMThZLVchOSdhZlYuKUxGUFIsSVFfWT4wV1RhN1ZwPUBKPSZAU19iZV8yZmBnRyxQLzlGbSVzI0lFMVBVcDtsdWknLS1iUWlJSGhPcmhvVGAxLlJmVVxlWFxMK2BZIz4rLi5cYEwwKG9kdUhFWEZ1ZlRVTkFFSlckUzJiK0FdLV9kWjVOLD8lIWRHRVBcWFVJUSdjSiRIMkRPcEYrMURfaz4wQmwpQ1ZwQllQWDlrWjJASkhjXmhyRjQsJWlQcyM8PjxaXSpXQFZIMklzOVVXbWVFbUdHTkExaTlDYiNkb2c+TSZPXkBtQmEuJ2JdI0Y/ZmFmQV85MFdKbm8hQTdXJEAtRGA/WipFTSdJLGp1bCY1LEYvWzFVIzBFMExQPGtyLWpfU1heR2JhVUFsLS4yV21aMEokRDE2bTstWnArKypqRmpzTUtAIlhlQCM6SktCMktwcWNOO188MlpLVzpxKTozcS0rVkBcSz4nQC5dKi8yaVxyaTUqKGhQQT5qZHU+OUZgKkRMT3AzTl9yOjtNMSpHbjc2SzUpNURQKXBZWzBYJV1XODhNSVVTMSsiXGFrbldrdElRSzsvL2gmQjAwZjJPblQnJDVGOTlyX0BBTjdrQCsyWW83P1o7QUg+c0ZzbDE7ckJJXWw6dVJLKnMoTTQqXjk2b09jaDBRVWJGMSpXUDlmIW1yKSE+VW81OkVAL0wmZiJvMmwiaGxHI0xCcShoPFBPbS5dbDNqK1w/bFtRaGY0PE8wSExbQDFpVEYzMi8jNz9YUT5PTDg8Wyg4TlheJSFnOFYpUjpsLkd0aEVNVyFZTWtTWCpWLk8sP3JcRmllWUFndTxga2hFLWhcIi5MNEhNXj1fODMxamZxXT49OHAvJGp0K1pRTjFII3JJcGkqRDckTyJjPFBdMVQ/JW9oNlM7THI4blw4Ol9gTlMuQU1mQjQ7ZGlAWkQwU2JFbE5kOGAiby9PSl5yYkRzNm9CXyQ7UVI6Q0hkJWhwKjImTihbZjsvQUMyKDl1XGEoblFjalwpNnJKbCcrTk1Hb1cpVHNjJ1c8NW5BcFQlUUNwQXBpWic2NWtQbDxYNWZSPypoN0gpRytKTFs9SENjM1kkNCZsQ2decVVCVkEqTDxXYEwxUUFsKjQ2MU1BMl0uMlY0RzhsUylRLGB1UFFqN01IPjJYZTZSMSFtVUlBVyxydGknKzxSOUA5cUUzOnA6QC8scDljRFByZWE+ZW1mV3FCJEdlQj4sOCIzaDFdZV1hUj09Pz50R0dnIkk2Y0pUWW5vRSNlIXFPPURBP0MmKDtGIlFeSXJbYlZXST42MkQ2M2x1Z3NGN1MvN1pObWhbLFFNNTFHalVtIl1dRUJmJVonZCZARUBrZTxybSUvJy5dO1t1Zj1oMDo8bFRGVlMqXjEwWmlOK2stQ15LQyJoZFxySykzVUxbKWI9ZXAtWklPXXNwczw/QGNZaVJdXCZgV0kkSipebmlLazBVcUdXSSw1akFtJjNMSmAwYE9BInVjNC0kLHBXQTJzb3VJJSs4Ul1jKW4qIVlVJShfLF5uW15QaGxJMGxpZFlkIXIsJU4uMGw4bl5IaUEvZExvP10yNUZ1cVBMcGwwalxjJydwXGwpSFFZMyVBPSRaYztERS1sTSMhN0ohJjFXKkUpOzYxTVZGNTtoSUNiMGhISm1qPShkcXFlS2QvdEM1VG5eU2VwbDBLTCNNR0xWfj5lbmRzdHJlYW0KZW5kb2JqCjEwIDAgb2JqCjw8Ci9GaWx0ZXIgWyAvQVNDSUk4NURlY29kZSAvRmxhdGVEZWNvZGUgXSAvTGVuZ3RoIDEyNjQKPj4Kc3RyZWFtCkdiIVRWOTVpUUUmOmo2SydtIScsWHQhJm4sSj5ZXi09KjlYSjhYQUEwPTQsLzlJXEA0LG89XCxoXGg7bCozR0ZVNz1caGA3TyIkOWNBXm9VT18sMGJMXF5zTSI3VF8vRGEsc2EkLVpKZEdmNCVpImpaOztnRExCXi8xcikhRi1PXGRXKDtnbGI5LzsrVXUzK0NnXCVYOlxZU2tMSilKZEo9TTo8RklRT11ZJE9OdF4kVkFeK1pfTiosWTtMOmllXU4kbEZvai1GW2RyNilSLD5eV0ZjYzwnNSxqL2g1Jis0Rzc8LmIsN0VRS2lWRGIpSVpWXnFwNWRtb2BBTGVhIlZRRWpwOUlucWtIWTJLPDVOQ1lHL0JWRkZSUFU8cDBFOG9ObixBO1ZCU1E5NEUubnRpQyRxbl9cWFNQJTt0NGAwKEZOKXAzMEwlTFIvR11nKmcwPy0lTFBya1IqS15uMTtlXkFsMCorLihGOVMwQChXZGUkQmUwanBWQUMwUW1ZIkovI2c4KWNMbkQkXz0zO2koMDk2IV02TF8iVFJUJDwjUDdpV0lQQChsXyY9V0A+S2IsLE1pdF9IMTczUUhQRS9gTyRaYTwpZm91dCZbQlpUbFs7KHFCNDYnXW5YRk5kSVNTWSwrTj0ickJESVpaay9XUiFUSGAwWmgybjIvXCxWalpkSFNeWW8wZE0jTDo2SUs+ZT9acjtea3NAWlwlUkdQKUpNOSVaU14wRltoP3FgT2FVczBoVEBhJjEpLHRhTjVcInBQKi0+TTY+OEhrOGIxWidwQlFZbk1KRG5Mcldpa2Y0NyJfXVZcW2JkOi0iOEpWJC1KMzxjcmwqUT44IWM7NW0hUVZfJkI5KGdHMSxDQFFTKWUnZCFfPUpRaDA3UWZEYFRcc1kxWC5AYlopbFMvVz90SnNzQG1PcHJvM1tPTG8+VHRjT2kjXDpaIW5aUis9dCg6SEQyUDpbPU87UXBaQGVDS04waloiTVsnWVJmUUdMT2FUcGptRT4mU0xMNUs/PCs1QSE7IjwkKiEydC1LXicoQWlEIlZSdFIvLy1BPCtqP1JDODRjWlQjVk9AYjJZMmtWJjtNOjZcUDVTLUNxQmxCTUdfWkUpIV1DV201IWohOzJQXSpaLmg5PyZLJkBLZWg6W3JZVWdtXjxvODM2L04jTyk7QSEyNFUwSjxlUG1oZlVtQCYhZ3NNXllXJmZSbToqcHNSM2IoNiRZbGZAXl1SKF0lQyEtSGNeaUcwQ1YzWF9gR2o1am03TTkiNj1YLlQ4blR1LEdNMzlqaCchXi4+NysqImNJPnBbKV1qbGpLLnJpWzFKUkBKJWgrJV9aQWs2TTZnTWMzaipXSDZvJEhWLnAyJktqXU47Vm9ZJWFQKHBdMkVoOVAqTTdiRWxtJFhKZj8yazYkRG9AWzkrOyEnVFtAJikoP1g9b21qLUswZW48Xi4sW0dJKTFQb0JJRlk9IW1oWHNvPW5laS0yYlM8IW5Pbl5aJickZz0qJENrNyVsKUJDP2MmTXFIcDxlOk0zXE1eYCdcRVk6LUNYR151LVFPVjBBUXVIJmo8cyknW1YlJ2hgT1Y3X2Y9WyQsTVBSJiJLYlw1P3RJRUU5LTVjRy8wLjQ6IWNaOStwTG8waFRUQUQqYU5qSkQ2R2owT3FhO14iJ0RhOi8tfj5lbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCAxMQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwNjEgMDAwMDAgbiAKMDAwMDAwMDEwMiAwMDAwMCBuIAowMDAwMDAwMjA5IDAwMDAwIG4gCjAwMDAwMDAzMjEgMDAwMDAgbiAKMDAwMDAwMDUxNCAwMDAwMCBuIAowMDAwMDAwNzA4IDAwMDAwIG4gCjAwMDAwMDA3NzYgMDAwMDAgbiAKMDAwMDAwMTA1NiAwMDAwMCBuIAowMDAwMDAxMTIxIDAwMDAwIG4gCjAwMDAwMDI4NzggMDAwMDAgbiAKdHJhaWxlcgo8PAovSUQgCls8Yzk1ZjhiNTEwMjg4MDE2Y2IyYjVkODgzYzE0ODlkZGU+PGM5NWY4YjUxMDI4ODAxNmNiMmI1ZDg4M2MxNDg5ZGRlPl0KJSBSZXBvcnRMYWIgZ2VuZXJhdGVkIFBERiBkb2N1bWVudCAtLSBkaWdlc3QgKG9wZW5zb3VyY2UpCgovSW5mbyA3IDAgUgovUm9vdCA2IDAgUgovU2l6ZSAxMQo+PgpzdGFydHhyZWYKNDIzNAolJUVPRgo=',
+    teoria: 'JVBERi0xLjQKJZOMi54gUmVwb3J0TGFiIEdlbmVyYXRlZCBQREYgZG9jdW1lbnQgKG9wZW5zb3VyY2UpCjEgMCBvYmoKPDwKL0YxIDIgMCBSIC9GMiAzIDAgUiAvRjMgNCAwIFIgL0Y0IDcgMCBSIC9GNSAxMCAwIFIKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL0Jhc2VGb250IC9IZWx2ZXRpY2EgL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcgL05hbWUgL0YxIC9TdWJ0eXBlIC9UeXBlMSAvVHlwZSAvRm9udAo+PgplbmRvYmoKMyAwIG9iago8PAovQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nIC9OYW1lIC9GMiAvU3VidHlwZSAvVHlwZTEgL1R5cGUgL0ZvbnQKPj4KZW5kb2JqCjQgMCBvYmoKPDwKL0Jhc2VGb250IC9IZWx2ZXRpY2EtT2JsaXF1ZSAvRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZyAvTmFtZSAvRjMgL1N1YnR5cGUgL1R5cGUxIC9UeXBlIC9Gb250Cj4+CmVuZG9iago1IDAgb2JqCjw8Ci9Db250ZW50cyAxOSAwIFIgL01lZGlhQm94IFsgMCAwIDYxMiA3OTIgXSAvUGFyZW50IDE4IDAgUiAvUmVzb3VyY2VzIDw8Ci9Gb250IDEgMCBSIC9Qcm9jU2V0IFsgL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSSBdCj4+IC9Sb3RhdGUgMCAvVHJhbnMgPDwKCj4+IAogIC9UeXBlIC9QYWdlCj4+CmVuZG9iago2IDAgb2JqCjw8Ci9Db250ZW50cyAyMCAwIFIgL01lZGlhQm94IFsgMCAwIDYxMiA3OTIgXSAvUGFyZW50IDE4IDAgUiAvUmVzb3VyY2VzIDw8Ci9Gb250IDEgMCBSIC9Qcm9jU2V0IFsgL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSSBdCj4+IC9Sb3RhdGUgMCAvVHJhbnMgPDwKCj4+IAogIC9UeXBlIC9QYWdlCj4+CmVuZG9iago3IDAgb2JqCjw8Ci9CYXNlRm9udCAvWmFwZkRpbmdiYXRzIC9OYW1lIC9GNCAvU3VidHlwZSAvVHlwZTEgL1R5cGUgL0ZvbnQKPj4KZW5kb2JqCjggMCBvYmoKPDwKL0NvbnRlbnRzIDIxIDAgUiAvTWVkaWFCb3ggWyAwIDAgNjEyIDc5MiBdIC9QYXJlbnQgMTggMCBSIC9SZXNvdXJjZXMgPDwKL0ZvbnQgMSAwIFIgL1Byb2NTZXQgWyAvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1hZ2VJIF0KPj4gL1JvdGF0ZSAwIC9UcmFucyA8PAoKPj4gCiAgL1R5cGUgL1BhZ2UKPj4KZW5kb2JqCjkgMCBvYmoKPDwKL0NvbnRlbnRzIDIyIDAgUiAvTWVkaWFCb3ggWyAwIDAgNjEyIDc5MiBdIC9QYXJlbnQgMTggMCBSIC9SZXNvdXJjZXMgPDwKL0ZvbnQgMSAwIFIgL1Byb2NTZXQgWyAvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1hZ2VJIF0KPj4gL1JvdGF0ZSAwIC9UcmFucyA8PAoKPj4gCiAgL1R5cGUgL1BhZ2UKPj4KZW5kb2JqCjEwIDAgb2JqCjw8Ci9CYXNlRm9udCAvU3ltYm9sIC9OYW1lIC9GNSAvU3VidHlwZSAvVHlwZTEgL1R5cGUgL0ZvbnQKPj4KZW5kb2JqCjExIDAgb2JqCjw8Ci9Db250ZW50cyAyMyAwIFIgL01lZGlhQm94IFsgMCAwIDYxMiA3OTIgXSAvUGFyZW50IDE4IDAgUiAvUmVzb3VyY2VzIDw8Ci9Gb250IDEgMCBSIC9Qcm9jU2V0IFsgL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSSBdCj4+IC9Sb3RhdGUgMCAvVHJhbnMgPDwKCj4+IAogIC9UeXBlIC9QYWdlCj4+CmVuZG9iagoxMiAwIG9iago8PAovQ29udGVudHMgMjQgMCBSIC9NZWRpYUJveCBbIDAgMCA2MTIgNzkyIF0gL1BhcmVudCAxOCAwIFIgL1Jlc291cmNlcyA8PAovRm9udCAxIDAgUiAvUHJvY1NldCBbIC9QREYgL1RleHQgL0ltYWdlQiAvSW1hZ2VDIC9JbWFnZUkgXQo+PiAvUm90YXRlIDAgL1RyYW5zIDw8Cgo+PiAKICAvVHlwZSAvUGFnZQo+PgplbmRvYmoKMTMgMCBvYmoKPDwKL0NvbnRlbnRzIDI1IDAgUiAvTWVkaWFCb3ggWyAwIDAgNjEyIDc5MiBdIC9QYXJlbnQgMTggMCBSIC9SZXNvdXJjZXMgPDwKL0ZvbnQgMSAwIFIgL1Byb2NTZXQgWyAvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1hZ2VJIF0KPj4gL1JvdGF0ZSAwIC9UcmFucyA8PAoKPj4gCiAgL1R5cGUgL1BhZ2UKPj4KZW5kb2JqCjE0IDAgb2JqCjw8Ci9Db250ZW50cyAyNiAwIFIgL01lZGlhQm94IFsgMCAwIDYxMiA3OTIgXSAvUGFyZW50IDE4IDAgUiAvUmVzb3VyY2VzIDw8Ci9Gb250IDEgMCBSIC9Qcm9jU2V0IFsgL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSSBdCj4+IC9Sb3RhdGUgMCAvVHJhbnMgPDwKCj4+IAogIC9UeXBlIC9QYWdlCj4+CmVuZG9iagoxNSAwIG9iago8PAovQ29udGVudHMgMjcgMCBSIC9NZWRpYUJveCBbIDAgMCA2MTIgNzkyIF0gL1BhcmVudCAxOCAwIFIgL1Jlc291cmNlcyA8PAovRm9udCAxIDAgUiAvUHJvY1NldCBbIC9QREYgL1RleHQgL0ltYWdlQiAvSW1hZ2VDIC9JbWFnZUkgXQo+PiAvUm90YXRlIDAgL1RyYW5zIDw8Cgo+PiAKICAvVHlwZSAvUGFnZQo+PgplbmRvYmoKMTYgMCBvYmoKPDwKL1BhZ2VNb2RlIC9Vc2VOb25lIC9QYWdlcyAxOCAwIFIgL1R5cGUgL0NhdGFsb2cKPj4KZW5kb2JqCjE3IDAgb2JqCjw8Ci9BdXRob3IgKFwoYW5vbnltb3VzXCkpIC9DcmVhdGlvbkRhdGUgKEQ6MjAyNjA5MDgwNTE4MTQrMDAnMDAnKSAvQ3JlYXRvciAoXCh1bnNwZWNpZmllZFwpKSAvS2V5d29yZHMgKCkgL01vZERhdGUgKEQ6MjAyNjA5MDgwNTE4MTQrMDAnMDAnKSAvUHJvZHVjZXIgKFJlcG9ydExhYiBQREYgTGlicmFyeSAtIFwob3BlbnNvdXJjZVwpKSAKICAvU3ViamVjdCAoXCh1bnNwZWNpZmllZFwpKSAvVGl0bGUgKFwoYW5vbnltb3VzXCkpIC9UcmFwcGVkIC9GYWxzZQo+PgplbmRvYmoKMTggMCBvYmoKPDwKL0NvdW50IDkgL0tpZHMgWyA1IDAgUiA2IDAgUiA4IDAgUiA5IDAgUiAxMSAwIFIgMTIgMCBSIDEzIDAgUiAxNCAwIFIgMTUgMCBSIF0gL1R5cGUgL1BhZ2VzCj4+CmVuZG9iagoxOSAwIG9iago8PAovRmlsdGVyIFsgL0FTQ0lJODVEZWNvZGUgL0ZsYXRlRGVjb2RlIF0gL0xlbmd0aCAxODA1Cj4+CnN0cmVhbQpHYXRtO2JBUT8iJkE3MFYpRUJnOU4oLmEvXitBdDRxYS5TRUtEPVg8L15ZVURaS05JLmx0IWhaWCVDJzo0Iy5SUiJHZVVlLC5qblZXblMsPnBsIXItRV9aMnROOEZSTTsmJUpxOFBwRCUxamJsK1peXC1XZDw9V11UUjdBXjB0biU0QS5oQm0iXTYxLEBwRzRsTG0qZUFsMzgxcnFuOm5LMWc9Sk1SLFddVk5hcHAoJXRjVik2XmgiM0g0WkNKLVtKOT1XUWRRSTEtclw9b3FuJVdcPi5fNWMkbUdcN2taIV5jaFFoSFBudVdlZCFeKlY3STVYbEcrbSspIllrPWZYZmNjSj04cFE9ZFRTaE0sSDAqZFgtdWQrVkMscVpcSkZmWzdDLnA3QEs8QThpOkw0cm9VaychR0EoRDojP25XJmtPRWZwXE8yU244YUFeOjgndUVPOzc8I21jMEU/Q2FLZHIkMSVZckpnZHNlakhIdUxVXGJSNGhYb2k/bSwpV19NcWdkT1prK2JRIktTKycjYWpNYlk9LystUFYhMyZvVXNWZmJcKztaa1tWSCF0PE5XQjBIQl9iO25nV29VQmozR2pudFtHPmhBQnNcOzUsQ1NlNE1VcikyaVllTCliK083JEJIIzFdQk41OTVOQ3FwSzMsLk5OUiVvJC8sQkk7SmVoOFE7JmxEVUNHSz9YKTo/azpRZjdwZT45czdbYjolRyszQF1ncSxIM2YsPkciLFYoS1I4UmhjT0skZSgjRVpuXS5WPG5mRWwyP0hRPVEzTFFxKTNmJUg0SGBBKC1QO19VKSpjM0o3XWVPajxca0ZaUUNZajhfLWZqMEdfa2IvLkdcOVBLLlA2MCxdUSwiVzJcbiwpLlxWZlNNVFBzUUNUOXVKb2w5a2F0Y2RBK3BsIShbMFYyMF5vMCkpVGFaSmA0MDlXYjpJXERrPW8rbGQhIjhAO1JaKVtWSHAnYG1mcihiRGgqJDJSKGs8RS5HSkxsTUdHdUE5PWsyMms9V2s6Vlk7SkxtVmZnVGppKC0qRC1pQzk1KDtkWipvIjEwL25SMU8vZnVkKD4/VFRQQ1AmL1ssV15Qcy8jOTcyYWo5Y3U5NmsuRmxMTG1TLUtnOTsjYltPQWMiP1lUSmtZXUhVYDhNLFhqJWdzKjk6MV9tV0tRb2E8REZsRGlARlQwMEwlMV0sbSlbJ1NrbVpca2M6QWJyM011N1pJKmpcMEBWSzg6I0JtWC5iLihyXkkqL0dXR1FTTmtYZD50byVoJjJRYTFHMm4yQVBOJFJWOl1pVyE+TCV1PVxSTiZFO1deM1x0O2EwJCV1SVElc0gxPEc7TlEhUClnbzEqQzEpP3VFOHFDKWBKPmAtREdNY25MI0JdQFVuWydeTFtVMUBOXWwhVVNxbktyW1lUTGJnPClMaXNgVE8mSkczRSwyVEs7TjhxNjtGcGEiW1p1TUBUSDtaNmomIm1YalpdMHBoMCk2KlJPN0soWFpsV0MwbEUuNTo/OGRHQm1VL1EuaVlmMzd0WWZBTCNiVzRbJGxkQUIxO009TiFMcWBuPCRZRUJrVlU5JmUoNFZfaUdyK2pEUWk1TzUxZSg0azgzOSpmR0tmXGRZNUMtRDVEXyxxVzcnU0thMlxFQCYmUCQ9Ql5wTypsXiw4VDhWLzNxWkc+LUFoXSpga2NoRWBjNFomXG1dWDc1VU5bJyRxJGw+NGI6RzxdMGNDU0hKRFw/Xi5iNVRqQmk4bTFcZnJrOG9zU0pJOVQ7KFxUXDImKzFxYy0xL2tCPTg8JVZTOHBZdVNPRjsxZm0jTERvS1tpTWY7RWJfbmZLIjQkMUlUZ0phbVFSVjVSXF9ZVDUza1w2RXEkMGJSUyo0PzJpKVQ9PzpIRl1TSlJqQidKRGsmOURbL2UjVTomSlxAb1xJQCJKKFlzZDtaXXBxSGsuOzZmUmxYST9hME9IVTZeUWAsZDgkKUJyNFkzWUZlQUNZRClxdEtvdGtHYm11PFRiPVwmOkxiQChJclpAIlhyND8tZWYrN0NBNW8/LUhyW15AdDZJWDVJb051Ijk8MSMlLD1gY3F1TTtoQnBtLikwX2VwTCZrIy5dbUk8ajUlV1xsZFlPPEAwRGImXWUuPUZQQWtQMmlvPlE8aDZwbzJnLDcwJl01UkVRXW4+XyptOUpmPiRkcmdDLjxYQiIrOV5KSSZgPDdmbG1NRDBSa2xRcE0uPTpjLzcvOi1maFZnbT5gWmMhaGlfOzlOZTJCTV1BUlZPUTtkWFo/P0pCJ25FZTU9b0RbN3RMQyU1ISghYWhtNGFQN1xsdUM/QGE9WjIsRC9WVWldNjE2VXEpPGdDLzptJCw6YW9LVDBTQk9APVQ0SmtJXGtFT2NxZCxRby5SNCJDOFZ+PmVuZHN0cmVhbQplbmRvYmoKMjAgMCBvYmoKPDwKL0ZpbHRlciBbIC9BU0NJSTg1RGVjb2RlIC9GbGF0ZURlY29kZSBdIC9MZW5ndGggMTQ2Ngo+PgpzdHJlYW0KR2F0bTo5NWlpSyZBST0vJS8vYHI9XUguXmcicDVKQm89bS1VNWI1SjBHPGIsLnU9VF5cXU9qSUlOMXBTUFtuJjYjUnBKTzkvRktTNzErcUInKVooYzZwR1BQYSdTdCtLSmtuKUJwQCcuTUNwaSNwTGRzSkYxSiNtU2A9PGVNZGo0bDZyJms4S2ltPjVZI15EJ2FSLjtNOC91RT8+KWcqImlTSUNUJ3JpbWhQYypsOiQ8cGBHZV10L0prYl85WEM6X2luM04oK0JEMTJjSHMyJlA4NigvOHNiaD5WVSc7XDhJVjUyQCM9P3BRPCRdNz0zUXNYYFxtLVNYV0k3KWVJa010OzRYZjdQWz8vTG1IJU80dUBXP1E4LlZlYnJeZ2YqMCM3K1c+LUJ0UG4mO1txXlplc1RdJ0M2YzhRRixFWkk8Z3I/YkJsLmpXO0ZWayYtPTY+KFU4ImomaEQjU0xeOWRUaGIrMzZtNz89QmBDPT9TJztZc00sZE0wXnRMYUZlckw4LkFnTlVoQy9IZiZWRVNQdCFnRlJdY1pjViJXMjdCSyRocUFsVHErLmNNJ1ZqUFFyXCFZN3Neci1BKm5kPkIyRmVvR09RKzpfSmc6NzBcKFJUcjtNbGcpNmwjS21IMUwibGIjPHUpKiFnVidwXSFcbk4+XGlALjAmWChCYzFbWmM1KmJ1XUdWVlRsbXNBXD48RjI+WWBtUi4vIiw/aEYhLHVkJ2wwWU5EVCxEQTFdPCthMUtdOUAvZ1hiJUVRXEtNIU47VzBIaD4uJyNvMDcjb1M/bDMxZW4nNTtnJ1ZVYCNvJSt0LF4hVXMwSEZrLlBKNk0xWWVYSXFFYVNLQW45X088OFlHMiw8PiEhJEVJV1RRWD4/cnRLPD4hLDhNRiZJJHI5VGBZLDpcIll1cC9qXXVTR01PLWNwPmVJOkZzSyxkNDdCREJyRDRjbTNRXmhQQVUmWzMmOi9HOi9fL0dAaWk6RkNxPTdOYSRMXjFiJXFIOzc/WEg6Q2RYSCttaGA5X20pSl4hUjtzYFtubSpHI0VHLFFMP1puN1ZyWzIrUHEvMkc0Qz5DaF9fLElDLVstSnAiZFo6KzcnbGkvXEE5S1tTci1pQmFYMDBsVSZNWVNGO08vS0g8cnVmYlk7Ui84RXBfKHVjS1Rfbm5gdE5VR0pIOilDVjgmOFE1ZlZiM2MsOGEpPV1pVThTUlk5KmJkWFUsY2NWKSpmZ2FkSERyVmA5bV5TIi9ULjg8WXBLR04/ZkYkQmlOXCtCViVONHNXO2liKl5Xb3IhNkY6WVZBbCpxXnREW2RGNVdJTDFIKCJMaFUzPWgpVG5fZD1xOzFZVlhSZi4qaEV1SjwzbC9fLD07MF8iO1g6MGFldU82LVlyKCUwTFVaV21ILE4nYSVnYWpPIUpHNk9MYSFgJWNpJip1WkU3UlZWJTcxNnFgZWJSNV4sYGNZbGslS1AuTGInTFo9MEY6VSg7Py9JRmhFcTowJiQ8XWwzQUBiQmxqWSdKKDErOCJmRGZQbi44SiVFM3UyL2NYKSc0cyg9aVc1XChIb00oTG5PUSFvbEtRIi1uZnUpZUVWcSI3YHJHRyRyMUtjYUBOO1QoZ0VAUkltcTs7KEdUYShrP1chIXVNcUZuSF9faHEzQmJsKlc/LFJIdSNzIVBubSEuN0xpa25lLihjPTBaN1wvLUw1bExDK0chT0Q0c0s4PypDOGxabTlBVnMnNyl1UkVBTnVjWmc9ZkIkV0JmKSo5ITU8Ul5FUjg1PEhAN1gqZDNfKnRTUCsjXDcwaToycCEjYTAxXjVoPEkwZzVIdEVPP2FYMzpPbmc3LTh1WU4lUDdjJ2JWNChSXi0oVE9jJDckRnFMRjIobyJyMVxASj9wdFgkQkxLb1wlQFRYZVFgcSFyJjZHTjljciQmPnBDQGlhSklXWltXIzdXKVhmfj5lbmRzdHJlYW0KZW5kb2JqCjIxIDAgb2JqCjw8Ci9GaWx0ZXIgWyAvQVNDSUk4NURlY29kZSAvRmxhdGVEZWNvZGUgXSAvTGVuZ3RoIDE4NjUKPj4Kc3RyZWFtCkdhdG07PyNTSVcmOkRnLT05TCU2KildOmtBQlhEYWlTI1dnIWtrRF1wdGtwODk9MlQlLCRlKT0wREZkTlFCSWc4VU1BYTc3VllBZ1xBUi5VZm9fcDUqdGVMcy8jJ0xPXSJBZShAW1xvP1VrPW8vKzZkTmRvJlc4XS8kZ3NpLTZrKF1dZzdsVkBQT1UuODs1LlNTVyhVLzEqaj1rXyslbj8yZzI3K0RiTzlWcWk1c1JaVlNrISlINWwiQT9LUmUtbyVNK2pnJ3RpRz4/VGxSZjo8aHMySlw1SDU6X1A3M2ozKUpaLkUhRSJsbURGPig1WDZyMk44TCQydTJHPzVrTUoiWUl0TGoiJzdERCpdQF0+KnNxbSRxWy1TQytySEhHLlw5RkVDKXVXYDQ4SFhjXWImSGRaSkMpclIocSVcY09IKy5AWkcsKSspTTd1a0ksL2E7Vzg+JWpaaXE+LlIkODczVXVGQVBGI15fbSxkVnMuJlYyK3BqKzhYOlowOm5idHJDL3E5K1I5RUlpKlVyN0M5OTRKWUReVD5CTV0rdDJuLlZZbGcqPiVaQ2pgPyxtSjsmPiIkT1FFZyhyNzxNLW5nJGIjY0FaO1Y8VitHbkc0amI2TFpqbCQyZidcT21nJGdPb2pUUElIOjpQJUJRb1cqRlc0Wy5UKC5DbDAkO19FNFpII2YuP21eOTI0O2ojO0FkTDZMZ2QzRSh0L3I9W0NEUUkzKj1IKSInOWdMUFpDP2J1SyoxTjVXZDxSU3RaSnJnci9uOmYsPGQ+ISJGMHRIWSkzJywhZlQ3TTcpNzAnZShaN0ckSStFdEAsRXUmRUEnZThYaEMhKm0oVi1INzcnJU5fbFY1O1krRmVCZ0oqNUowRmhNWElUTzJWIjI9ZD5wLTg5bCc9VENSaS4sKWFXSllGJ1tJPyJxRiIwPCpDNlo1WGtaIiU6YF4jT245UWNZaC1HKFpJPFBiMzkqZSNHVF9SRCRxS1hGa2FrSjpDRV1fZGEhdFhvYE07W3BeZzUqZmd1Q2lFJFUwUF5bP0pNXishaCMiOV4+bkVJYjhwLTMjPisiZTgiPyhKVicqIkxWL0I4JEBdcS8qOFRocipXYGBHZFY/bSs7ZWRlOGZdYHM+QCk5W0U4XEJbXjBLInVEbTJLWztGQDlXMDpASGZRRVpwVjA5LGZ0NkA+W1Q9UDBZdGtzOm9DO2ozJXRLQEtYbWssZ0JNQU5vZTBsZUllMmYtTidDJ0Qpa0xkbjFlU2s/LkNaTiNBZCRiOzwhW01qMm0tTFdzXERFamVsUkFxZUpLQm8zciw3QzFNTV1vbGZJKCtScGlHMCVUUSklKHQzP3RcVHRjUUByNm4oXlZhai1OVG4zNl4lPm1FTyRHcD06Z2xKT0E/NUhnOyUzS0RDdDNMUkt0KXJvOCxYTGRcSHIwL2Q2UzlKKldJUzdEPkxPYTVaQF1WJ2hsYW1gaiY4b0NlLy1KdTFvblQ3I1RnZVUzVFwqPWtCZFpOYitebVQmI05UU1guO0BcUkclWV5sZUBrcGpdMixSVCwyP15BWCNILl5tXioyUStnRmFDWCksXmQmVGlcWk9WJUtnPic8bl5TYlhwZ2QscmtKO0JvKFRGKW8maF5wV2xPakdeUUlCRDxtKHFHYU4mRWU2RDVdYHU+IXVKJEdFYkxZP3QuVjJdKzYvQ14yNGBqLDw/Py5MQD1aYTY8RVpFMFBSSCVKPmYmJDA2PWoqJlQsO1dkYCVHcjdcUDRtc2ReRW9MbVVkSiczWUdKcyUxRj1rKzFCQks9LnEzbVQiWllQXSMoTjRXJDQ1LlFgazNpPmBJazRtM2lkUU5ePVJhTz5dKyVHV3FoRk8oIjMiRE4xIzx1anJkcCZrRCJdK2JJWFs1Vz9CRDJZP0VXbG1jRUE7Tjs2dFcoNUspJyNiR0BXRUdJbGshNU42VE1jT0oiUWFgTSRQYSFSK3JmdVNDUFYhKXJQQGUoXjxILTExU0xIOCVOOWlZXGZuKk5xK20hN0QpOk9dI3VuKlxTOz9ZT0RTLm0wN01CV1onWF9WOGhualFxN1lWL1RQRUZmJkhRYEleRyYpa09kWGVgYjBQUlU6VCY1Yik6UiQ2TT5BRGJQWSRQQExgWzxOVC0wQCZxI15OWjEwWEBiIWEzTFhrL2EsRXQiQDY4LHJwKD5PIklsW1hpTFJaIilqXVhacElfKzI3SkEiU0JyYG1iXk5tQFc+Wl1aXC1bRT8iRFtKVVNOTlljXmwwKCJTRGpaIW9vR11rY2Rwb10nRXJuTHFGZmhuOChwT1BNVTlrNyk1NmxAOmRvR1pDTisvN3E4OE4+aUJSPWhjZCloUUVzZ009OitDaHNaTTcmPEYrLzNxZW1ccS5LRVpDSzlGck9DLzMmZEFwJGlDVFJTWzduPDkhayVWRlhTZCJhcUQ8QSlCLkwzLzdFNCguKkVVJm4+OzxwNyxqRjgic3JvKn4+ZW5kc3RyZWFtCmVuZG9iagoyMiAwIG9iago8PAovRmlsdGVyIFsgL0FTQ0lJODVEZWNvZGUgL0ZsYXRlRGVjb2RlIF0gL0xlbmd0aCAxNzc1Cj4+CnN0cmVhbQpHYXRtPGdOKSUsJjpPOlNtLFViK0JPcFktTXVEajQtQ0gydCchJEgvJFVkO2c+UzpFRTtRXW9qNFVbRmE2amhIbyptUjpyJDNVaV5jXm05cjVYU2UtcyVJSS1nRE87MSU0REtyW1xQI2VgJi4/ViYkcTE0KEk5aXQxOFcqUyNOT0pbKF5BVVBKLUptQjRXNGhZZSFUTGUhWVlhLFxIQTteUW9DZmBXb3JKSEhkUj9iKzVUNl06QG08Z2MoNlUzaEIvRDVvREgzOmtFZSI5X1sxYGZIKGZuZi8lUUpIOSddIW5JVVRtXUVVQDBVTnVINWheblFwUSU+Km5SJ01XPDhHSSltLkVRQlg/ckZLJ1tdOWMwZTxNSlgnMzc5KVAuQV1kPi5XLS9cNjFbRigqaTNuM1ptIlxUUkVTTEkwXWU0Y2A0MTE5TklrJVNAUihIYS5QNDIqPTMuMi5cJDBJSWt1PyQ9OG4qMV46ZzE2XClEXSpJMEhKLUJwcUYzblpfZ11mZ05jXT07XzlibSRUSF1ALlRdTjc8V0pLQVhEPD9bTz5eL2RTdSkzZi9ITzJHWjxAUmRoY21eWjhyJjF1bHNwJGs5TTQ+OUM7UVMlaSotQVxjR1JaVVZSMih1UDhZcCgnLEkmWSNtVEpvUTpmWG5WOGBzKmRoUm1NSzQ7VHBbRU9eOzVcYWVPZSUrZyE1L05KTWtQZDFsay8ha1AsLGA6WGZITllcNyE/WTJSXSQqRi5ZTGI4VkdAaU8mM05VPmFqcFtITzxSY0tiVi1TaU5pJ2tscjRlPyU+V1tWTGlRRi1jSjtLYzRpNVI1VV4qME5KU2NjYTdhS0JRXz5wWmNpT0BTPWUraHVwOE9nTURcSzw6UjovdWNIZXBmI24kYUJSKkRQaWY4JE4lS2FlIyNKRThAcmhbPkZGbzlJUy1UJDxLQFF1LiU3LT1yMCFfbEZgO0UlPl9EMllVYiFmYTVUV21hdF9eb1JNRixgMVwjSkYuTnFwOFQkLyZXXHJaJV8wLzIvO0RXQzw/QVgsYTIxRiwxcCRybmF0JiwrLCZnKz01Wl09KFlIJUc7YGAnNF9OXWFMUydGaktqIm4jZSE6I2Nva0RubVEvUElgSmcxUThFPzNDc0pIP0UjWjFUXEBGV1BvMWRgUjQ9QzVebnFuYHFpTipBb2NbPTJzPERoVGNTI1U2YlplI0VYMSItVixSRjheQXM2c0xhVVUnPk49WDhlTjxoWD02Mm0lUTNwW2VRJi9yXlQobFtDJEdULFg3ZjY7UDdKQk5nP3EkOGhiUjo5aGYzaVZeYDc8XTheSVNUXU1qMHQ9PFFFQGhVLnFdRVtiR3VGNTAwW2JDK2ViWGBrUmQ7ODNLIzhhPjNbZEY+Tl9ZXStvI1pQKktwSyNMaGhWTTYtOC5sS2s2QlhnbTdRRDVIVV5GPEw7Tm1GUi1IaXVfbnFcLUU5NzklISQ0XVQnTlpIQVJUUThvL2JOajI9RT5uLmdyPD9hPWJnUVxOYEo5ZDRaQGpWb2tna14wLVJqJjpZWEdKb24jL09nTFZqY1ZkWCxOPktqSVJgRkJeQz5fLTA/TGRobk1cUW8/KFg1JjwiLERiOG5RRWUmZkxGIUBxIWdcVlByLT9IPUdFQShqXy4vU0V0RSJpVCsiRUomYjhfYkkvYz1EUUwvbktMYWtuSipFaSY9QCxzOnAyOSstWCM7UEM6UkQ7alw2dTVyUHBCZDdcYWFyNGcrNm1nV11rb3QwW0ooUUQ9PkNfU25oXWshJVJbWVpyWUswKjI3anM4ZCFhUEhEZlFqcVEiSXJAQ1ImcUVhQixGWz1HU2xsZV5HX19WciVzamRnW3M9J0BPQEMrbFJgPG1kMyo6aTpbM0FFO1JJRSomI1hDY3IwcEEsIj90ZmhtQENSQjchP20oYzdBKCtOZjNfPE9TciJbM1JpY11xczVSYGohYkRxLlJjNiFGW0giZlJQX2hHZztBb0VbcUwqWmFZWyxbV1hxYT9hQVJuTi8uTysybls2QEIobTNra0dvXCQlISlDVE5Sa0xjUUlQIWo4Nk1uOSQ+ZUBYVVYoZTI1I3NDWmxEQEYtXUkkV1okOC5ecTFmISdVQCwxKihvJy8mIjU5YTdGNyEla2E7bEdjX1xpZ15qTE5TQW9XUjhCPW1KPV1eQ05PSF9xaEkoU05GKzclJltBJkEkcjxaYkBoUiJFay8wPz83U3MmayNaQ0ZcM0omNi03QCdxZEJjXmtTVGxpVzo0RCcwbSU2ciEzYCdySEM8VlU0MjQmPl45IlA7OT9PdHExRFYsZ19FViE2OVpWamFPb1g0WiNUWHVqR05FKVsxSWZYaWckKzl+PmVuZHN0cmVhbQplbmRvYmoKMjMgMCBvYmoKPDwKL0ZpbHRlciBbIC9BU0NJSTg1RGVjb2RlIC9GbGF0ZURlY29kZSBdIC9MZW5ndGggMTk5Ngo+PgpzdHJlYW0KR2F0bTw+dVRLOydSZi5HZ3U0K1g1VDhEUTBSYDhxRkxOamdaNmQrPTQtTEsiKDkrNWApOUdWXV5PRkxvKj9gMDgyVWVOKmBnM0hCWUtmMCYuTTMtW004SVQ/K1NwNE1ZPFBEaGBBRzMmQkpeUlJtJCg3V0hlM1VBNCokZTxGTkIpU0RcKkFRaiUyWGtWIzxISiUmYD9HZ2k8bz03PGBmQzFiMTd1OU1zNl5iSGk3SyNCXU01YTRcR2hUMjAtTG47OmdaKGMwa2NBKG9bQVlLZ00mNEg/PzM/TVI5Wz1yQlcwbCguS0k+cURLU24nJDVoZ2plOmhKVUs6a1ojOVY5QFJgPkVObV08c2UqTUZuOjA7X11sT0xoUS9hOzMsXU1xQDNDN1wqMzZoM19uOXMvTyxWP0ltRzAtJj9YPSZvKG1SakA1aSRiRSE/U3I9amhXW1AhTUtXLTZRbjpVRlhYdEpuWkdhcDNXXGA/JVsoPUgxISVIbj5HRipSUilabHQnXCNHWGtCSXNjWyskIidbLjRYQDRpRCRFciRVaTk5WDQ4M0gqZCJTR1ZFOUZsOytnN3NcUFpecDY7aT0vPmpPUl8nZTc7aTs5YG5UJVU2PCE7ciRKP0ViZCgtcCtZU05LP1RHXU9XaVJRbVduSWIyckxlQGVpbFRMaGY2Y2FOODE1NVhwQFclMWwhOFRwbEpUWzxrQzhwMm80VTFdMEBEQTNMYmc+SkJaYGBKOyJjVWk6NSxURDNjPkhbLkwiclc2XDg/PllHQidpWVBsQGxKS25vND5NazNdUzlGR3UtKCRuJj5tXGVOQXJHKS9pdTpVNyY2VFNeImlAV3NfMVIvNFInKDVjMnFnTFdWbmdXZyVCWTwnLEUrKz5pPEVfKTcrKj9WNUVQRXJXQmNKdUs0LENqaihaN2A2V0JzNVFWUTxnL0xeY0syVlYtT2NEXFA8VjAndGIrYmluKSRHbkY3QERILC5ZbjB0XFtuX1pgYkw/VCU/LlVpQmouVkpscHRsci5yOGY7RnFTV0o3LSdzTCcsVHAzK1FPWChIJlwxRVA/MjlJWD83P3FrQmM8aTwkaEFZLWY5b2FRaHFCYipCRDdyRjBhZD47Vk5yYUtGc0MzaSlJSDxBJF40ZkM9dFtjdCYzPmMnSWxXcTVBcVxvXCgkJEZVUmxzLTVkNTldVyVKUk08LkJhTXVLLygrcT0iPFM3JT41KTwoYDljRjkuIS1tNmpFSzFAS11kZmhjVXRzKFtXWCxmbClzdVMjSElQWD8pPSZTXl9ccmU8JjppLlJAWzQ2YHNIPkxSZVBYWlRSYjViUD1ZX2QzMTQuWC5XcDQ/aFdZQ2hVTyg0ZWlDQ2ZZcW49TihvV1pERVcwcXArLHFwYkwuc1Qsa04mciIlLiMtXDlwW2JKRXNlMGhQZCtRTV9kMipoQ3BRTW5gZDA3Q1Rkby5qRzFmKSpRWjFSXi5YL1FvNW5wMSIjXC5jV11KU0JiVWwzYz1sJkxnY1VXSDAxblUwX0JDXF1fbzx1biEpRFMnOG5FOFVucFBYMmpbMURfN1FoNTg2RkxhPyInRG1lRGMwU0hQRGIzPT9dLV84YiVKa2FWXW9FVTc/PmJlQ15tKkhqay9pb05bRV9RT3VdRGI8MTpZTktCS0szYzc7dHRlbCVGZzBOPF82N21jNUdjWmckWC9fNnU9KHRRLnQwcC01aFFfZ3EiRyNmLkhZTDNLQmpAJUFIXTY6JTo7OmRsODQwV1kiXStLcFtOI09iTzU1N0klTUBLciFcOWdpQzJsRFRHaWcpY2l0LjY0ISFZTUkoTGE3cj8oRUI9QzVicE0iSjs8NGErWVNPMyFcO3BAYUVKLz8pRzZXVWkvOTY1TzRvbzNLaSkiOk5kLVxAbHEyVjlkbCc+W0xuRGNyIlk+b2lzTzpxLEJPX2lyLVk4O3U2ZVJJPy5XTnU+QD9qVVYuaTNvYSVBUDc/aURfQzJlNllVZSc1NCtvQkAwJk8rb2koYlZJXkc7UEQ/LUMzIkAyPlREWlwma3RfJ1E5I10nMEJMZyw7RzRaTzVrK0FXXDRlW0NkcS4+WHBQYz9jRkc6cT9jKi0nZHUiamVJLWxUamg2WVhVSHByMDo2Jl0wSjorQUZGZW03LzlHSjJVNSgvckRtRHNQXCNuaSE5W0pibGhBMGZTQ0BWVm81QEpTPGdxc3NuMFRSdWFKNzJlJ2FJXDJnOkBTTkcxQXRMa25xYjgoL0NWUCNhKzhddT1rdW9cWENOPkg7UkAsRCwoITc+MEA3TWlfQzVPODlqWzRBSmRBRikoa18xJkUuXTFucCkpPS5XMyltPnNMSjpCJSc4ZlFkX0lUcmZRZDNHY1UkWjxmJD8oISU6IisuOFNpXElHVjw0cEJta3E0aD0sSGkiMXQkTEliN2ssIVEpLTdaMCM0O288aFNqLG9iQ2lBI0cwOyZfc08rUmJLcENTVSZPLSFHLSU2QTdsNnFXOVRqJidOVkc6TGE9RC8rOHNTKVNZN0BrOTozPFUyXCtkcEkickU9Sj5BcGxFZXQwOmVIZ0V1c3MjbDBiNVNvIWdUWkN0KD05YWU8KFdhOT05cGNLMEYwQCIlZzJPQyhZNC00SE1yKTtqVmJMSG9eJkopNmJVZVB+PmVuZHN0cmVhbQplbmRvYmoKMjQgMCBvYmoKPDwKL0ZpbHRlciBbIC9BU0NJSTg1RGVjb2RlIC9GbGF0ZURlY29kZSBdIC9MZW5ndGggMTM1MQo+PgpzdHJlYW0KR2F1MS45bEsmTSY7S1pMJ20nIV86MCxsIkFjJmNIRzglPktKU3FfVnFFZSxmUVxJbVhVdVhINW9tS0VScTxDO2dKSUJBWCw3Mmw7UjxkWy0waFVxRGlOSHBOSWJXNWk0JTpjdGMoOCRkUExKWWldJXBXST9hOS5IRV8yMj4hXVQvcDlwMlZWW1wrUyoxS05NJi9YTDBQTz9IaVcrbmlFKDxibnBXOSI8S1ZdQ2AvTHJiMSJoMkgiYShXLDh1YTFwdSpWaWtxSVE8LShSS1toI2krZGNNP0FuTWBXYjhdbC0jQDBwLWkoXlMsa1l0MyNLcl1fJWg4PE9FRCRtXiZQOFA3UytlXU8zNCRkUmdjTWUlKSVNcSltYHFRT1JWN2NMJiZLVEE6Q0NzMHNWLy9naHAwJGBbYT5wbSVlYCo7Z2VtWz1YNjhoQ2FUbTsxXEdNTUU+KWdDS0s5a29wYmZTWnJYNWU4KDZBXWtSWEtDWCVKR1NINGplVjwoX3EyXmQ1O3BJUkFULTJuOyVTVEpkaC0+PWFOPk0mQ04vSHBgPUciOjViUEFxal9ESzBvbzdUS2p0aCVXTTVEXUcnXSZnMExZNFRvWWxqaWc9clpEbkBjayk1K001b1MoWl43QXQqU1owK3BGXiZxSlFHVypTNEFYIyMuLlsvPENVUkJeM2lgRDVbZHVpPGM4bThAK24qJFs8aTU8IVFQSCwrYHQjLzNpXTQvJWpNIk9FbyxAdWhaOz9wbGNhJWY8QVNdNGs9VSJCZzNbNiFrWTUnIzlxJ3FcXDU5IyMrIWRWMlpmOyJIV05QUCVQLlxkU0QrTmYyZz1zOGhNbGMzSipgKjovWG88Vip1WCNmTDEzdTArPjxVSCVXLStRYW5vIk9qcGksSz5vZTo8aitIOS1oP2o0OTY/SDZdWT4vOklRRDRnYFdibXNgJiEzKS5gYjI9Nyo6S0I3RmBFZicwYEJIIVZfVitFOVQ5QycmVy49KVEtJkpaQlk1XExjbm4jWiYyTFEmQichIWNePSFBKkEvQjhqVS9tTFMqdVRtNShCU05rLUY6QDAwLmBEWl5QLFBvYmNtJ0hVbmZwR146P2FzYGEvc2RvQWIjZmshSF43UUovYEcpcDlvWC11TGk/KD8yYGlsR1JdSyYwaSYiVEpOOTJzMkUxNShmaUZnaGRyXVtDKVAjdG9lPFYnQ2JMTilWR3JZUjEpbl8qSC09ZCwxKy5XTlwyWio3dThmQTpLZjdPX2FjR0Z0YSdkcSgpdElTaWs3UGFIQkU0JzdHW05SQ1xrYk5mXkNOUTZXaVonM2BnJHAxUXVdQGdERS5oIlkrVExDQ2RJbiNwOWpNJk4icmg1bkFbVzVuJDxcJUxNJFJCIitCUCpEWE1xNE9faF8pUS4wZSdvQ0NELjhsS2lFTlZKayFISHEuO19xYDFqWk0mPyg+bUkuWkI7PF1zc1QpLmkrKXEoLSZUPlxrOlteWmM1PC1kWSs4YmM9T0I7MiZscmM0ZGMwWUJaL0UsaD9IIyFzYDdbKm1JIVZpI3A8dT1sbDFZX1U+JjExKC5tKVwobF5uNyZtK2FvJ0c2bi5YODI3Wm89Wi5rWmgkX0hxdVEkQEw7VisyKC5ZLztYUzA0Tlg+W2crMFhUNSZGM2tMUS1pUVUuNSJeTz9AYDc5LjJwRSFTVHROcUliQSgnLlpNOEhdXTBfXmcpSyphKmRRYEdDM1hbMGJiOjQxJlpuJlJGak9QKkctMDA7ZkBhYF5vWzwmT1gzSl1UYFRTJEo/MlkiXjQ/LzJ+PmVuZHN0cmVhbQplbmRvYmoKMjUgMCBvYmoKPDwKL0ZpbHRlciBbIC9BU0NJSTg1RGVjb2RlIC9GbGF0ZURlY29kZSBdIC9MZW5ndGggNzYxCj4+CnN0cmVhbQpHYXRuJF01bFhbJjRMcW9gS2tOa0U8czpMMTVUODRMaSZHbytFL28iIVdhL0w6W0c6Mkp0YitJLVxJO29pPSJSTyVzUkpLMFpgSGNkb0Q+LGhgTFVaYkNKXiQ0VFsuOzlCXmlAVkhaM2VmX2Y9MDZCZnNsbmBvT19adTVJcHFSakNPKTd1amM+U20iRldqQVFTXzx0QDI0P0gmRGQjQV9rIz9JQGhgRTtHMW1MW05abjo6KFtoP0UscHEzTS4mTmEtWVc/WDV0LExbSilvXSkpYCtjOyJXXUVRVC1dWy8oSWdNcFxpcFlXR3RdWEQrUCNWXVZOWGZDNzdGMFZcOXJKaUE9JVRdZUxBLEIvYT5VXjs+XigtLCk4SlZuYXNUSD1sbF9OV1lvIzZWZ04+NTlRTShVPl5aNkduXydKWkMlJ2I4M0x1MzcjJkAiXjgub05eYytFUHRETzY1ZyM0XzszTjkpZzMxbD4jZC11N2dlJjU5X28hVjFaJGZKTDRCXC9SL3NkMy9GQF10TmAlalAqcTAiQzgmTTZTQCxfSUBSXzYkNF1tUEJZWTQzM3RcbDclWjlrK29NZkVbYyFIWyd1dWpRQGZcQkBOcU8mUk9cWihsYk5TNFcsSzlAN0VLIlIwcUhFS3MsUzdkMnNrKCc6bHVoXjhUS0kkUFhNOltlOkZPaDxBbU1DaEU9VTtbP29VOS9XIz9GJ2VrUzoyLVdHMldgbEQzSXA1OmItRFpLYEhwZXNfPlRCXkJTRmh0WnFGWzQpY0onSyRDRCYoJ1daVVxsQFtecz0sT1VQZio1MDNJVFQzVnU3XF1SJzJVPFhFW1QkYi5MJk9DIygzYCZhKVwhaWUsWG89RWJNPUMnMWtFPGJSQmArNzc5XEY8Nz9fTFJvQEIjWVZUaWJeTzxlO0NQZmJxN05uIiFUNk0zVWBAIWpNNCxVQUZuJjJeOkprNyshYiFpbCE3MyhkYnBIMmo0VU8jb15sW3FKUUQhTld0MlghOyd+PmVuZHN0cmVhbQplbmRvYmoKMjYgMCBvYmoKPDwKL0ZpbHRlciBbIC9BU0NJSTg1RGVjb2RlIC9GbGF0ZURlY29kZSBdIC9MZW5ndGggMTQyMgo+PgpzdHJlYW0KR2F0bTo/I1NJZSY6RjVVPTlKb2YnVCw0VGU1cS85QkcxVVZpIlUmXG9MVVxkbm1uQGNoVS1PMC0yK1AybHFxcm04N2hqciY3QGZyblRLKSJBcC4qRm40RFp0VSpmX0g3SU5GOlBcLjtWO09XWWY+K08tcWxLJVhhaDRMMmpCWFhHaTBWNDhmYVlITSUxZiFYIVNgPigmPUNkVUVcWjZCS1BXbXJgZ001TjUmXkpQNCRiPnMmWlJMJTVWMDByMCpTJ0p0MWk0OClHVWFIIWooaXU6TC9wNz9xRih0bkwhT2ZTbztrPEFgK008U2JlJzdgLTBdSCwwZV8wNlc/IyZrKkkzVlVLXXFdakRRVUFtbnFybS84bkZyJVYwOzxTajYpPVFyYUZHMz1BMVtZSW0/USZsWj49Z1B1YCQ7LS1PUFoxPSxrTTZGLU8lPG1HXWVRImVwZFgxOzUqRi89NmhqKk5EVm9NS0g+M0U6ZiM0KCY5TDRGJyJdP01FSShudEM8XTdzSjhRKVJYOWQ2cltvLkNENCg+cDwpU05SYj9zSGZDRFppWm02THBtQSZDOCFrZjdsIl1yOnJuZHNPbEFgQVFlVURtTHVTI05WWTYjRFU9KFVUMl1IbT1YQGVmZG1DZyVXPVNjPVs1Zj9UPHUjVGYrUCg/O0wuQTtfW2NcP3UrYkFyOXNiKmdtITM/Tl5cKGVZLWtxc1ZxRj4mKyUiZF8zWUYzclBzWWtPMyUvcGw3bFlIcj5wOCI6OzZfLm1Db3NgYUtucnEuPG1pYExNcjwzYkcmc0VUIVcvSTs+Oi1RKkRnR0AnTDItLCIyaUo1RkJRXjA/aUFRSXFydFpVaUg5SVpqTXVYWlk6LDFFRzFuWGgrZWljcCooTSM6I0AkY3QzaHNxRWwncXIxJzNmPFtVJ0VRL1UpOCtjYkZKW2hiTFhadEVwVkcmaTZjSmM4cUU1QGhSYUxCRldmQTRnIkswTD5mXGZVKT9oXidCakckdThqalZsSCsubTBGYkpaRF4vbCVuUWVqMiwnaGxOM1A8KkREQVQ5LyFvby1bPWdiM0JYQUQuZmYsXW8qJHRNQ1tlUS41VyxJbzI4TUBnL1Q/LztALmVeKzRWWEleYEk1XSQoYSUhMEYnaTJgOUN0JCh0NGBIUCpqSUskTDhlcUE5b0ZeYCs/WGY3NWh0OVcvNyRmbE1fJztJNj1hYThCUGhGUVxbbDUoYFlaJGU4VW8yN0VdQ3NCYGhHTSQwOS5aL0gmJEJqKWhsVigxPXIwVDRSVmwndFcqSydGcCQlYStBTT1sNSNXJTFkOGcpJTtKXnFyLD91RmEtKTBxKlRnXj80L1dpN2haaG9oMHFJP2VEM1BcczQ9VkhjQlclRlxFVD1RW2QxakdfUF1SayckbWxaRDQ7XnQ3KTpHNFJrajJMU0RqLlcnak0+WCpbRj43Zk9mSydvNiFbVlsqREMxbCZaJmlMNl5RRTlwIzA3OFU9UFdyRyFUK2luSGJCITdaQy4hY0IrU3VddSYqXTZmbXIlQWxRVS9OPzMmVyQ0VikkVTJrVycnbiclXFRVSnJRKFo5YCtlTFJwJGdFPCFMWCU6M0ZeKkVMaUQ+KVNta3NbZlU1K2wpRlI+QmhvP3BCWSdxTVJRLEkjXkNzSnI2LCclLHVucGwpOl5OPTVAb1dlSjNtI0hIOC1CRnIwJyVicHNrc2UiQStlVEUvOGkncF0yLFdKdFJBZGVxYmsrQjNBck1mbi8nYi10XiNFXE5ZL2VsSzYjTFsjVC9dMVpiaGk6Ly1kIy9cOCVmQVIzT1dcQVY0WGdsVXNfWiwuLy1eWms1cFIzMSRVUXNTUDZDUS5eTVxuTC0oPHVNYE9ZNkI8T0E+Y1c2dEU8Z34+ZW5kc3RyZWFtCmVuZG9iagoyNyAwIG9iago8PAovRmlsdGVyIFsgL0FTQ0lJODVEZWNvZGUgL0ZsYXRlRGVjb2RlIF0gL0xlbmd0aCAxMjM1Cj4+CnN0cmVhbQpHYXRtOWdOKSUsJjpPOlNscTpyVE5tLzNMa2BSbVZqJ0g/YUJqLktTSDxIQjdKZF9xMyEzJy5PVColbmYsITA/cyphOWpeP0EiMGxGM14/bFBpPSJLbiNAUS1BT1NpYC5TKypXSDY/JzEiZy40VkcnMz4iK1YjbDRGLitfWTMvZ3QmaykybywuMXE3RjFPUz9WSCdYZlhbTU1JWzo6WkxoNi9JUT4yV1VFYVhIT1VzZWwrLzdTWDg+LUZkQWdIYyhwZS9iPTdxXC8lKlsjXEh1cDpmTWY+LjpUTWdLcUMsRDkoTEg5KWMqQl06K3ItJDg1Vys+Q0Vnazs5YEpeYjdXTihAMDJISTVrSGVVOVctZT45ITIhYWxYN1BFIXM6byNpPmllbVBOIzdzVkVoQkElOyVtUkd0UVI2b01RIzBcb1ZaSyxKOVRRazRBVGUlckZIPFQoQEZIWj4sXFs2KjRsVi9MMio6JyUkL1tuTm1dOTRKTDIvLTY5UWU0c3BSWVFKa1A9YzJaKEVsMGhiKlZjWCxbOz9QLHReXGlTKV9PQzBVQG5MIltrcWxUbjxYOiQ6JCdoYi5FKC03QFJJTjIyPz1XanRrbyZKSyhMZSpra3NXYWRYWi1wUWhbKCZUP0EsIXA/ZC4sYTI0OCF1XS0lWjcyIT9Oc0R1WFNXPyU6I01tXy9bYXBeJnJuQkZVSU5oNzs/a0o4OE51akpbSmw9T2xRJHImXSl0a1BsbFU7byJ1ZEo5TTlxVWtBWjYmZzBIXUclVC8qKD87ViRCcjpCcUhgLjNva09UbVJPJzVHQWAtUFQlLkAqSEdnKW02Y2cwIiJNNilXMGlEcyFxVURdSipWbTszOCZwJUJQPUxVaGs+PzRqK0Y+PGMydDFFImVdVzYxbDpjUTpaI0ZmNV5vYjskWlomYipZO3I+RS5xXzYhWzBJNmFPNys1STVfTFRaJDZxVFFQYDxbVypTU21DbmshQTgiaE5XZjBIck1TNHIuXDJwYzskTjNAbjBtREQ2JSErS2A7OFM/cl9fMkA7ZCRebm8wQU4xPUNKTXQzSlBtYXFIV0pbQVhyIzxASmFuPyFdVjBaWyw9SiFGM2FcMCoxLTlEXVE/QSZmXDgoNmZWKD1EIztUM01mUjksQCssQjlmJGlYZ1shSmI0c2BCNV84bDlSSkYzLCRNazgzPShybExIa3RnKzBHIlZLTiNbLDxhXWNvI1pyQmhHRF05YSJzMnMsTW1YbEVGSC4rJ0lwSFZzIi5SOThvPypKbT5NQiVATk1AJDVXJiQ/I2swVkYlX0JmXk41JSJzYjMwJGU4JScpWW45MkhsLGFSbmBwaGdCJ0hTT2xiU1BGU2osTDpLalFuXnM5VjInUjNsb2hfcEs5aS07cURxQlZVTlZOUV1NWWJ0WywqIVI/P2xkYGZPOkFhP0ptSmJldSRoMllcKSIySEZPInJmX1pOdEZJVFhGKmZkZGdzJmY/RkwuYGpQN3IwRWtASTQsY2kpUkgnNls3QTxIZGM6RSorMHRgSWNiMDlAKD8oJ2VtXyNAKDU2VloidEpVYWYyXWBHNGlfaipJaFlcVUxwJS5Wb2ovW1E9PW5hWyFGLzNoS1pETDMxRUhyX2gpSGlgbjhiL09+PmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDI4CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDA2MSAwMDAwMCBuIAowMDAwMDAwMTMzIDAwMDAwIG4gCjAwMDAwMDAyNDAgMDAwMDAgbiAKMDAwMDAwMDM1MiAwMDAwMCBuIAowMDAwMDAwNDY3IDAwMDAwIG4gCjAwMDAwMDA2NjIgMDAwMDAgbiAKMDAwMDAwMDg1NyAwMDAwMCBuIAowMDAwMDAwOTQwIDAwMDAwIG4gCjAwMDAwMDExMzUgMDAwMDAgbiAKMDAwMDAwMTMzMCAwMDAwMCBuIAowMDAwMDAxNDA4IDAwMDAwIG4gCjAwMDAwMDE2MDQgMDAwMDAgbiAKMDAwMDAwMTgwMCAwMDAwMCBuIAowMDAwMDAxOTk2IDAwMDAwIG4gCjAwMDAwMDIxOTIgMDAwMDAgbiAKMDAwMDAwMjM4OCAwMDAwMCBuIAowMDAwMDAyNDU4IDAwMDAwIG4gCjAwMDAwMDI3MzkgMDAwMDAgbiAKMDAwMDAwMjg1MiAwMDAwMCBuIAowMDAwMDA0NzQ5IDAwMDAwIG4gCjAwMDAwMDYzMDcgMDAwMDAgbiAKMDAwMDAwODI2NCAwMDAwMCBuIAowMDAwMDEwMTMxIDAwMDAwIG4gCjAwMDAwMTIyMTkgMDAwMDAgbiAKMDAwMDAxMzY2MiAwMDAwMCBuIAowMDAwMDE0NTE0IDAwMDAwIG4gCjAwMDAwMTYwMjggMDAwMDAgbiAKdHJhaWxlcgo8PAovSUQgCls8NjhkNzNlMTdjOTRiYTU2Y2YyYmEwZWRiYjE3Yzk1MjU+PDY4ZDczZTE3Yzk0YmE1NmNmMmJhMGVkYmIxN2M5NTI1Pl0KJSBSZXBvcnRMYWIgZ2VuZXJhdGVkIFBERiBkb2N1bWVudCAtLSBkaWdlc3QgKG9wZW5zb3VyY2UpCgovSW5mbyAxNyAwIFIKL1Jvb3QgMTYgMCBSCi9TaXplIDI4Cj4+CnN0YXJ0eHJlZgoxNzM1NQolJUVPRgo='
+  };
+
+  function switchTab(e, tab){
+    e.preventDefault();
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tab).classList.add('active');
+    e.target.classList.add('active');
+  }
+
+  function toggleAccordion(btn){
+    const card = btn.closest('.accordion-card');
+    const body = card.querySelector('.accordion-body');
+    const isOpen = card.classList.toggle('open');
+    btn.querySelector('.accordion-icon').textContent = isOpen ? '×' : '+';
+    body.style.maxHeight = isOpen ? body.scrollHeight + 'px' : null;
+  }
+
+  function updateCheckProgress(input){
+    const body = input.closest('.accordion-body');
+    const total = body.querySelectorAll('input[type="checkbox"]').length;
+    const checked = body.querySelectorAll('input[type="checkbox"]:checked').length;
+    body.querySelector('.check-progress').textContent = checked + ' de ' + total + ' aplicadas';
+  }
+
+  function shuffleQuestion(question){
+    const order = question.options.map(function(_, i){ return i; });
+    for(let i = order.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+    }
+    const shuffled = Object.assign({}, question);
+    shuffled.options = order.map(function(i){ return question.options[i]; });
+    shuffled.correct = order.indexOf(question.correct);
+    return shuffled;
+  }
+
+  const GAME_QUESTIONS = [
+    {text: "Encontrar un perno oxidado en el piso cerca de la zona de trabajo.", options: ["Seiso (Limpiar)", "Seiton (Organizar)"], correct: 0},
+    {text: "Etiquetar cada drawer de la estación con sus contenidos.", options: ["Seiton (Organizar)", "Seiri (Clasificar)"], correct: 0},
+    {text: "Decidir que una herramienta rota no se usa más y dejarla ir.", options: ["Seiri (Clasificar)", "Seiso (Limpiar)"], correct: 0},
+    {text: "Crear un procedimiento escrito para la limpieza diaria de máquinas.", options: ["Seiketsu (Estandarizar)", "Shitsuke (Disciplina)"], correct: 0},
+    {text: "Entrenar al equipo nuevamente sobre dónde van los materiales.", options: ["Shitsuke (Disciplina)", "Seiton (Organizar)"], correct: 0},
+    {text: "Remover materiales innecesarios del área de trabajo.", options: ["Seiri (Clasificar)", "Seiso (Limpiar)"], correct: 0},
+    {text: "Colocar un contenedor de desechos en un lugar específico y señalizarlo.", options: ["Seiton (Organizar)", "Seiri (Clasificar)"], correct: 0},
+    {text: "Adoptar auditorías semanales de las 5S como hábito del equipo.", options: ["Shitsuke (Disciplina)", "Seiketsu (Estandarizar)"], correct: 0},
+    {text: "Limpiar derrames de aceite en el piso de la zona de producción.", options: ["Seiso (Limpiar)", "Seiton (Organizar)"], correct: 0},
+    {text: "Documentar en fotos el estado ideal de cada estación de trabajo.", options: ["Seiketsu (Estandarizar)", "Shitsuke (Disciplina)"], correct: 0},
+  ];
+
+  let gameIdx = 0, score = 0, lives = 3, currentGameQuestion = null;
+
+  function startGame(){
+    gameIdx = 0; score = 0; lives = 3;
+    document.getElementById('gameMenu').classList.add('hidden');
+    document.getElementById('gamePlay').classList.remove('hidden');
+    document.getElementById('gameEnd').classList.add('hidden');
+    nextQuestion();
+  }
+
+  function nextQuestion(){
+    if(gameIdx >= GAME_QUESTIONS.length || lives <= 0){
+      endGame();
+      return;
+    }
+    const original = GAME_QUESTIONS[gameIdx];
+    currentGameQuestion = shuffleQuestion(original);
+    const q = currentGameQuestion;
+    document.getElementById('cardTextEl').textContent = q.text;
+    document.getElementById('btn1').textContent = q.options[0];
+    document.getElementById('btn2').textContent = q.options[1];
+    document.getElementById('btn1').disabled = false;
+    document.getElementById('btn2').disabled = false;
+    document.getElementById('btn1').classList.remove('correct', 'incorrect');
+    document.getElementById('btn2').classList.remove('correct', 'incorrect');
+    document.getElementById('feedbackEl').textContent = '';
+    document.getElementById('feedbackEl').className = 'feedback';
+    renderLives();
+  }
+
+  function answer(idx){
+    const q = currentGameQuestion;
+    const btns = [document.getElementById('btn1'), document.getElementById('btn2')];
+    btns.forEach((b, i) => b.disabled = true);
+    if(idx === q.correct){
+      score += 10;
+      btns[idx].classList.add('correct');
+      document.getElementById('feedbackEl').textContent = '✓ ¡Correcto!';
+      document.getElementById('feedbackEl').classList.add('ok');
+    } else {
+      lives--;
+      btns[idx].classList.add('incorrect');
+      btns[q.correct].classList.add('correct');
+      document.getElementById('feedbackEl').textContent = '✗ Incorrecto. La respuesta era: ' + q.options[q.correct];
+      document.getElementById('feedbackEl').classList.add('fail');
+    }
+    document.getElementById('scoreEl').textContent = score;
+    setTimeout(() => {
+      gameIdx++;
+      nextQuestion();
+    }, 2000);
+  }
+
+  function renderLives(){
+    const str = Array(lives).fill('❤️').join(' ') + (lives < 3 ? ' ' + Array(3-lives).fill('🖤').join(' ') : '');
+    document.getElementById('livesEl').textContent = str;
+  }
+
+  function endGame(){
+    document.getElementById('gamePlay').classList.add('hidden');
+    document.getElementById('gameEnd').classList.remove('hidden');
+    document.getElementById('finalScoreEl').textContent = score;
+    let msg;
+    if(lives <= 0){
+      msg = gameIdx >= 8 ? 'Perdiste todas las vidas, pero llegaste lejos. ¡Repasá y probá de nuevo!' : 'Perdiste las vidas rápido. Repasá el resumen y volvé a intentar.';
+    } else {
+      msg = score >= 80 ? '¡Puntaje perfecto! Dominás muy bien las 5S.' : '¡Completaste el juego! Repasá lo que falló y volvé a jugar para superarte.';
+    }
+    document.getElementById('finalMsgEl').textContent = msg;
+  }
+
+  document.getElementById('startGameBtn').addEventListener('click', startGame);
+
+  const QUIZ = [
+    {q: "¿Cuál es el origen de la metodología 5S?", options: ["Alemania", "Japón", "Estados Unidos", "Francia"], correct: 1, exp: "Las 5S son una metodología de origen japonés, parte del sistema Lean."},
+    {q: "¿Qué significa Seiri?", options: ["Limpiar", "Clasificar", "Organizar", "Disciplina"], correct: 1, exp: "Seiri significa Clasificar: separar lo necesario de lo innecesario."},
+    {q: "¿Cuál es el propósito principal de Seiton?", options: ["Eliminar suciedad", "Establecer lugares específicos para cada objeto", "Crear estándares", "Desarrollar disciplina"], correct: 1, exp: "Seiton organiza para que sea fácil encontrar y utilizar cada cosa."},
+    {q: "¿Qué S es la más importante para garantizar sostenibilidad?", options: ["Seiri", "Seiso", "Seiketsu", "Shitsuke"], correct: 3, exp: "Shitsuke (Disciplina) asegura que los cambios sean permanentes."},
+    {q: "¿Qué es Seiso?", options: ["Documentar procedimientos", "Mantener el lugar limpio", "Asignar lugares para objetos", "Capacitar personal"], correct: 1, exp: "Seiso significa mantener el lugar limpio y libre de suciedad."},
+    {q: "¿Cuál es el objetivo de Seiketsu?", options: ["Eliminar desorden", "Crear estándares para mantener las 3 primeras S", "Motivar al equipo", "Reducir costos"], correct: 1, exp: "Seiketsu estandariza procedimientos para garantizar que los cambios se mantengan."},
+    {q: "¿En qué orden se aplican las 5S?", options: ["Seiso, Seiton, Seiri, Seiketsu, Shitsuke", "Seiri, Seiton, Seiso, Seiketsu, Shitsuke", "Cualquier orden es válido", "Shitsuke siempre primero"], correct: 1, exp: "Se aplican en orden: Seiri, Seiton, Seiso, Seiketsu, Shitsuke."},
+    {q: "¿Cuál es la herramienta más común en 5S?", options: ["Software de gestión", "Etiquetas y código de colores", "Inspecciones verbales", "Reuniones diarias"], correct: 1, exp: "Las etiquetas, señalización y código de colores son herramientas visuales fundamentales."},
+    {q: "¿Cuál de estas es una S?", options: ["Seguridad", "Seiso", "Serialización", "Sector"], correct: 1, exp: "Seiso (Limpiar) es la tercera S de la metodología."},
+    {q: "¿Qué diferencia hay entre Seiton y Seiso?", options: ["No hay diferencia", "Seiton es organizar, Seiso es limpiar", "Seiton es limpiar, Seiso es organizar", "Seiton es más importante"], correct: 1, exp: "Seiton organiza (cada cosa en su lugar), Seiso elimina suciedad."},
+  ];
+
+  let qIdx = 0, quizScore = 0, qAnswered = false, currentQuizItem = null;
+
+  function renderQuestion(){
+    const original = QUIZ[qIdx];
+    currentQuizItem = shuffleQuestion(original);
+    const item = currentQuizItem;
+    document.getElementById('quizProgress').textContent = 'Pregunta ' + (qIdx+1) + ' de ' + QUIZ.length;
+    document.getElementById('quizQuestion').textContent = item.q;
+    const wrap = document.getElementById('quizOptions');
+    wrap.innerHTML = '';
+    item.options.forEach(function(opt, i){
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.textContent = opt;
+      btn.addEventListener('click', function(){ selectOption(i); });
+      wrap.appendChild(btn);
+    });
+    document.getElementById('quizExp').style.display = 'none';
+    document.getElementById('quizExp').textContent = '';
+    document.getElementById('quizNextBtn').classList.add('hidden');
+    qAnswered = false;
+  }
+
+  function selectOption(i){
+    if(qAnswered) return;
+    qAnswered = true;
+    const item = currentQuizItem;
+    const btns = document.querySelectorAll('#quizOptions .opt-btn');
+    btns.forEach(function(b, i2){
+      b.disabled = true;
+      if(i2 === item.correct) b.classList.add('correct');
+      else if(i2 === i) b.classList.add('incorrect');
+    });
+    if(i === item.correct) quizScore++;
+    const expEl = document.getElementById('quizExp');
+    expEl.textContent = item.exp;
+    expEl.style.display = 'block';
+    const nextBtn = document.getElementById('quizNextBtn');
+    nextBtn.textContent = (qIdx === QUIZ.length-1) ? 'Ver resultado' : 'Siguiente';
+    nextBtn.classList.remove('hidden');
+  }
+
+  document.getElementById('quizNextBtn').addEventListener('click', function(){
+    qIdx++;
+    if(qIdx >= QUIZ.length){ showQuizResult(); } else { renderQuestion(); }
+  });
+
+  function showQuizResult(){
+    document.getElementById('quizQuestionCard').classList.add('hidden');
+    document.getElementById('quizResult').classList.remove('hidden');
+    document.getElementById('quizScoreEl').textContent = quizScore;
+    let msg;
+    if(quizScore === QUIZ.length) msg = '¡Puntaje perfecto! Dominás las 5S completamente.';
+    else if(quizScore >= Math.round(QUIZ.length*0.75)) msg = '¡Muy bien! Repasá las que fallaste y quedan redondas.';
+    else msg = 'Repasá el resumen y la pestaña Memoria, y volvé a intentarlo — vas a mejorar rápido.';
+    document.getElementById('quizMsgEl').textContent = msg;
+  }
+
+  function retryQuiz(){
+    qIdx=0; quizScore=0;
+    document.getElementById('quizResult').classList.add('hidden');
+    document.getElementById('quizQuestionCard').classList.remove('hidden');
+    renderQuestion();
+  }
+
+  renderQuestion();
+
+  function descargarPDF(tipo){
+    const base64Data = PDF_DATA[tipo];
+    if(!base64Data) return;
+    
+    try {
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for(let i = 0; i < byteCharacters.length; i++){
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], {type: 'application/pdf'});
+      
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = tipo === 'resumen' ? 'Las-5S-Resumen.pdf' : 'Las-5S-Teoria-Completa.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch(e) {
+      console.error('Error descargando PDF:', e);
+      alert('Error al descargar el PDF');
+    }
+  }
+</script>
+
+</body>
+</html>
